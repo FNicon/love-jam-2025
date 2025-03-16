@@ -16,6 +16,18 @@
     {
       "type": "lua-local",
       "request": "launch",
+      "name": "Debug Current ",
+      "program": {
+        "lua": "lua",
+      },
+      "cwd" : "${workspaceFolder}",
+      "args": [
+        "${relativeFileDirname}/${fileBasename}"
+      ]
+    },
+    {
+      "type": "lua-local",
+      "request": "launch",
       "name": "Release",
       "program": {
         "command": "love"
