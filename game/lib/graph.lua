@@ -24,7 +24,30 @@ function graph.node(data)
       table.insert(self.neighbors, neighbor)
     end,
     disconnect = function(self, neighbor)
-      table.remove(self, neighbor)
+      table.remove(self.neighbors, neighbor)
+    end,
+    isneighbor = function(self, node)
+      if self.neighbors == {} then
+        return false
+      end
+      for _, neighbor in ipairs(self.neighbors) do
+        if neighbor.id == node.id then
+          return true
+        end
+      end
+      return false
+    end,
+    isconnected = function(self, nodetocheck)
+      if self.isneighbor(self, nodetocheck) then
+        return true
+      end
+      local found = false
+      graph.traverse{self, onVisit = function(node)
+        if node.id == nodetocheck.id then
+          found = true
+        end
+      end}
+      return found
     end
   }
   return n

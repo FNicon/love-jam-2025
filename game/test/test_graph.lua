@@ -13,3 +13,7 @@ graph.traverse{n1, onVisit = function(node)
     print(node.id)
   end
 }
+
+print(n1:isneighbor(n2)) -- true
+print(n1:isneighbor(n3)) -- false
+print(n1:isconnected(n3)) -- true
