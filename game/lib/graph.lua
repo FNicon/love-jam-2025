@@ -14,10 +14,11 @@ local function visitedSet ()
   }
 end
 
-function graph.node()
+function graph.node(data)
   id_counter = id_counter + 1
   local n = {
     id = id_counter,
+    data = data,
     neighbors = {},
     connect = function(self, neighbor)
       table.insert(self.neighbors, neighbor)
@@ -26,21 +27,29 @@ function graph.node()
   return n
 end
 
+function graph.edge(n1, n2)
+  return {n1 = n1, n2 = n2}
+end
+
 function graph.traverse(t)
   local next = {}
-  setmetatable(t, {__index={visited=visitedSet()}})
+  setmetatable(t, {__index={visited=visitedSet(), edges={}}})
   local n, visited = t[1], t[2] or t.visited
   visited:add(n)
   if t.onVisit ~= nil then
     t.onVisit(n)
   end
   for _, neighbor in ipairs(n.neighbors) do
-    if visited:contains(neighbor) then
-      return
-    else
-      return graph.traverse{neighbor, visited, onVisit = t.onVisit}
+    if not visited:contains(neighbor) then
+      graph.traverse{neighbor, visited, onVisit = t.onVisit}
     end
   end
+end
+
+function graph.draw(root)
+  graph.traverse{root, onVisit = function (node)
+    love.graphics.circle("line", node.data.x, node.data.y, 25)
+  end}
 end
 
 return graph
