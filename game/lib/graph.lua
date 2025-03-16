@@ -1,5 +1,7 @@
 local graph = {}
 
+local nodes = {}
+
 local id_counter = 0
 
 local function visitedSet ()
@@ -12,6 +14,33 @@ local function visitedSet ()
       return self.list[id] == true
     end
   }
+end
+
+function graph.getallconnections(from)
+  local neighbors = {}
+  graph.traverse{from, onVisit = function (node)
+    table.insert(neighbors, node)
+  end}
+  return neighbors
+end
+
+function graph.isconnected(from, to)
+  local found = false
+  graph.traverse{from, onVisit = function (node)
+    if node.id == to.id then
+      found = true
+    end
+  end}
+  return found
+end
+
+function graph.deletenode(nodeid)
+  for i, node in ipairs(nodes) do
+    if node.id == nodeid then
+      table.remove(nodes, i)
+      break
+    end
+  end
 end
 
 function graph.node(data)
@@ -86,6 +115,7 @@ function graph.node(data)
       return found
     end
   }
+  table.insert(nodes, n)
   return n
 end
 

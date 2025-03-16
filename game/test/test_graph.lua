@@ -14,6 +14,19 @@ graph.traverse{n1, onVisit = function(node)
   end
 }
 
+print("> get all connections of n1")
+for _, node in ipairs(graph.getallconnections(n1)) do
+    print(node.id)
+end
+
+print("> get all connections of n3")
+for _, node in ipairs(graph.getallconnections(n3)) do
+    print(node.id)
+end
+
+print("> n1 is connection n3? ")
+print(graph.isconnected(n1, n3)) -- false
+
 print("> n1 is neighbor n2? ")
 print(n1:isneighbor(n2)) -- true
 print("> n1 is neighbor n3? ")
@@ -36,3 +49,11 @@ print(n1:getedge(n2).weight)
 -- one way traverse graph check
 print("> n2 is connected n1?")
 print(n2:isconnected(n1)) -- false
+
+print("> n2 is connected n3?")
+print(n2:isconnected(n3)) -- true
+print("> n3 is connected n2?")
+print(graph.isconnected(n3, n2)) -- false
+
+print("> n2 is connected n3?")
+print(graph.isconnected(n2, n3)) -- true
