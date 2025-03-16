@@ -20,25 +20,61 @@ function graph.node(data)
     id = id_counter,
     data = data,
     neighbors = {},
-    connect = function(self, neighbor)
+    edges = {},
+    printneighbor = function(self)
+      for i, node in ipairs(self.neighbors) do
+        print("printing member ", i, node.id)
+      end
+    end,
+    connect = function(self, neighbor, weight)
+      local used_weight = 1
+      if weight ~= nil then
+        used_weight = weight
+      end
+      table.insert(self.edges, {
+        from = self.id,
+        to = neighbor.id,
+        weight = used_weight
+      })
       table.insert(self.neighbors, neighbor)
     end,
     disconnect = function(self, neighbor)
-      table.remove(self.neighbors, neighbor)
+      for i, edge in ipairs(self.edges) do
+        if (edge.from == self.id and edge.to == neighbor.id) then
+          table.remove(self.edges, i)
+          break
+        end
+      end
+      for i, node in ipairs(self.neighbors) do
+        if node.id == neighbor.id then
+          table.remove(self.neighbors, i)
+          break
+        end
+      end
     end,
-    isneighbor = function(self, node)
+    isneighbor = function(self, nodetocheck)
       if self.neighbors == {} then
         return false
       end
-      for _, neighbor in ipairs(self.neighbors) do
-        if neighbor.id == node.id then
-          return true
+      local found = false
+      for i, neighbor in ipairs(self.neighbors) do
+        if neighbor.id == nodetocheck.id then
+          found = true
         end
       end
-      return false
+      return found
+    end,
+    getedge = function(self, nodetocheck)
+      if self:isneighbor(nodetocheck) then
+        for _, edge in ipairs(self.edges) do
+          if edge.to == nodetocheck.id then
+            return edge
+          end
+        end
+      end
     end,
     isconnected = function(self, nodetocheck)
-      if self.isneighbor(self, nodetocheck) then
+      if self:isneighbor(nodetocheck) then
         return true
       end
       local found = false
