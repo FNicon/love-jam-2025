@@ -22,6 +22,9 @@ function graph.node(data)
     neighbors = {},
     connect = function(self, neighbor)
       table.insert(self.neighbors, neighbor)
+    end,
+    disconnect = function(self, neighbor)
+      table.remove(self, neighbor)
     end
   }
   return n
