@@ -19,11 +19,9 @@
       "name": "Debug Current ",
       "program": {
         "lua": "lua",
+        "file": "${fileDirname}/${fileBasename}",
       },
-      "cwd" : "${workspaceFolder}",
-      "args": [
-        "${relativeFileDirname}/${fileBasename}"
-      ]
+      // "scriptRoots": ["${fileDirname}/../**/*.lua"]
     },
     {
       "type": "lua-local",
