@@ -21,7 +21,7 @@ function votebox.new()
           return (score < 0)
         end,
         decideresult = function(self)
-          self.goal.goal.state = "decided"
+          self.goal.data.goal.state = "decided"
           if self:issupportwin() then
             return "support"
           elseif self:isopposewin() then

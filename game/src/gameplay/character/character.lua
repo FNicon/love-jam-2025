@@ -1,14 +1,8 @@
-local graph = require('lib.graph')
-local goal = require('src.gameplay.goal.goal')
-
 local character = {}
 
 function character.new(name)
   local newCharacter = {
     name = name,
-
-    action = character.action,
-    reaction = character.reaction,
 
   }
   return newCharacter

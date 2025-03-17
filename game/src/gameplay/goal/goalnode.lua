@@ -1,17 +1,15 @@
+local node = require("src.gameplay.nodeobj.node")
 local goal = require("src.gameplay.goal.goal")
 local goalnode = {}
 
-function goalnode.new(graph, goaldata)
-  local newgoal = goal.new(goaldata.name)
-  local node = graph.node({
-      type = "goal",
-      data = newgoal,
-  })
-  local nodeobj = {
-    node = node,
-    goal = newgoal,
-  }
-  return nodeobj
+-- data : x, y, label, icon, progress
+function goalnode.new(data)
+  local newgoal = goal.new(data.label, data.icon)
+  local newnode = node.new(data.x, data.y, data.icon, data.name)
+  newnode.data.type = "goal"
+  newnode.data.goal = newgoal
+  newnode.data.progress = data.progress
+  return newnode
 end
 
 return goalnode

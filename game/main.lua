@@ -9,7 +9,7 @@ local root
 local nodes = {}
 
 function love.load()
-  levelmanager.init(nodes, graph, icons, ui)
+  levelmanager.init(nodes)
   levelmanager.load(1)
   overlayStats.load() -- Should always be called last
 end

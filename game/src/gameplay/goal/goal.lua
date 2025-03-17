@@ -1,9 +1,10 @@
 local goal = {}
 
-function goal.new(name)
+function goal.new(name, icon)
     local newGoal = {
       name = name,
-      state = "pending"
+      state = "pending",
+      icon = icon
     }
     return newGoal
 end
