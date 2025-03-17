@@ -1,4 +1,4 @@
-local palette = require("lib.palette")
+local palette = require("assets.palette")
 
 local graph = {}
 
@@ -6,7 +6,7 @@ local nodes = {}
 
 local id_counter = 0
 
-local function visitedSet ()
+function graph.visitedSet ()
   return {
     list = {},
     add = function(self, node)
@@ -127,7 +127,7 @@ end
 
 function graph.traverse(t)
   local next = {}
-  setmetatable(t, {__index={visited=visitedSet(), edges={}}})
+  setmetatable(t, {__index={visited=graph.visitedSet(), edges={}}})
   local n, visited = t[1], t[2] or t.visited
   visited:add(n)
   if t.onVisit ~= nil then
@@ -137,35 +137,6 @@ function graph.traverse(t)
     if not visited:contains(neighbor) then
       graph.traverse{neighbor, visited, onVisit = t.onVisit}
     end
-  end
-end
-
-function graph.draw(root)
-  local visited = visitedSet()
-  local radius = 15
-  local edges = {}
-  graph.traverse{root, onVisit = function (node)
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(node.data.portrait, node.data.x - radius, node.data.y - radius)
-    love.graphics.setColor(unpack(palette['orange'][3]))
-    love.graphics.circle("line", node.data.x, node.data.y, radius)
-    for _, neighbor in ipairs(node.neighbors) do
-      if not visited:contains(neighbor) then
-        table.insert(edges, graph.edge(node, neighbor))
-      end
-    end
-  end}
-  love.graphics.setColor(unpack(palette['orange'][3]))
-  for _, edge in ipairs(edges) do
-    local angle = math.atan2(
-      edge.n2.data.y - edge.n1.data.y,
-      edge.n2.data.x - edge.n1.data.x
-    )
-    local start_x, start_y =  edge.n1.data.x + math.cos(angle) * radius,
-                              edge.n1.data.y + math.sin(angle) * radius
-    local end_x, end_y =  edge.n2.data.x - math.cos(angle) * radius,
-                          edge.n2.data.y - math.sin(angle) * radius
-    love.graphics.line(start_x, start_y, end_x, end_y)
   end
 end
 
