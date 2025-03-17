@@ -3,25 +3,14 @@ local overlayStats = require("lib.overlayStats")
 local graph = require("lib.graph")
 local palette = require("assets.palette")
 local icons = require("assets.icons")
+local levelmanager = require("src.level.levelmanager")
 
 local root
 local nodes = {}
 
 function love.load()
-  table.insert(nodes, graph.node{
-    x = ui.buffer:getWidth() / 2 - 60,
-    y = ui.buffer:getHeight() / 2,
-    icon = icons.character[1],
-    label = 'player',
-    active = true
-  })
-  table.insert(nodes, graph.node{
-    x = ui.buffer:getWidth() / 2 + 60,
-    y = ui.buffer:getHeight() / 2,
-    icon = icons.object.door,
-    label = 'find exit',
-    progress = {max = 4, current = 0}
-  })
+  levelmanager.init(nodes)
+  levelmanager.load(1)
   overlayStats.load() -- Should always be called last
 end
 

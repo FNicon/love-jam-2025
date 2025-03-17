@@ -200,4 +200,12 @@ function ui.draw(nodes)
   love.graphics.draw(ui.buffer, 0, 0, 0, 4, 4)
 end
 
+-- WIP: Print text on screen
+function ui.print(label, x, y)
+  local newx = x - ui.font:getWidth(label) / 2
+  local newy = y - ui.node_radius * 3
+  love.graphics.setColor(unpack(palette['orange'][3]))
+  love.graphics.print(label, newx, newy)
+end
+
 return ui

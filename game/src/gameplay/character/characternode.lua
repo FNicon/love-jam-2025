@@ -1,44 +1,44 @@
+local node = require("src.gameplay.nodeobj.node")
 local character = require("src.gameplay.character.character")
 local characternode = {}
 
-function characternode.new(graph, charadata)
-  local newchara = character.new(charadata.name)
-  local node = graph.node({
-    type = "character",
-    data = newchara,
-  })
-  local nodeobj = {
-    node = node,
-    character = newchara,
-    support = function(self, newgoal)
-      if (self.node:isneighbor(newgoal.node)) then
-        local current_weight = self.node:getedge(newgoal.node).weight
+function characternode.new(data)
+  local newchara = character.new(data.name)
+  local newnode = node.new(data.x, data.y, data.icon, data.name)
+  newnode.data.type = "character"
+  newnode.data.active = true
+  newnode.data.character = newchara
+
+  local lambda = {
+    support = function(newgoalnode)
+      if (newnode:isneighbor(newgoalnode)) then
+        local current_weight = newnode:getedge(newgoalnode).weight
         if (current_weight < 0) then
-          self.node:getedge(newgoal.node).weight = self.node:getedge(newgoal.node).weight * -1
+          newnode:getedge(newgoalnode).weight = newnode:getedge(newgoalnode).weight * -1
         end
       else
-        self.node:connect(newgoal.node)
+        newnode:connect(newgoalnode)
       end
     end,
-    oppose = function(self, newgoal)
-      if (self.node:isneighbor(newgoal.node)) then
-        local current_weight = self.node:getedge(newgoal.node).weight
+    oppose = function(newgoalnode)
+      if (newnode:isneighbor(newgoalnode)) then
+        local current_weight = newnode:getedge(newgoalnode).weight
         if (current_weight > 0) then
-          self.node:getedge(newgoal.node).weight = self.node:getedge(newgoal.node).weight * -1
+          newnode:getedge(newgoalnode).weight = newnode:getedge(newgoalnode).weight * -1
         end
       else
-        self.node:connect(newgoal.node, -1)
+        newnode:connect(newgoalnode, -1)
       end
     end,
-    abstain = function(self, newgoal)
-      self.node:disconnect(newgoal.node)
+    abstain = function(newgoalnode)
+      newnode:disconnect(newgoalnode)
     end,
-    vote = function(self, votebox)
+    vote = function(votebox)
       if (votebox.goal == nil or votebox.goal == {}) then
         votebox.goal = {}
       else
-        if (self.node:isneighbor(votebox.goal.node)) then
-          local current_weight = self.node:getedge(votebox.goal.node).weight
+        if (newnode:isneighbor(votebox.goal)) then
+          local current_weight = newnode:getedge(votebox.goal).weight
           -- calculate chance to vote here based on current weight and other factors
           if (current_weight > 0) then
             votebox.votesupport = votebox.votesupport + 1
@@ -49,7 +49,9 @@ function characternode.new(graph, charadata)
       end
     end
   }
-  return nodeobj
+
+  newnode.lambda = lambda
+  return newnode
 end
 
 
