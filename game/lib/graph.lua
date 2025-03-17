@@ -1,17 +1,19 @@
+local palette = require("assets.palette")
+
 local graph = {}
 
 local nodes = {}
 
 local id_counter = 0
 
-local function visitedSet ()
+function graph.visitedSet ()
   return {
     list = {},
-    add = function(self, id)
-      self.list[id] = true
+    add = function(self, node)
+      self.list[node.id] = true
     end,
-    contains = function(self, id)
-      return self.list[id] == true
+    contains = function(self, node)
+      return self.list[node.id] == true
     end
   }
 end
@@ -125,7 +127,7 @@ end
 
 function graph.traverse(t)
   local next = {}
-  setmetatable(t, {__index={visited=visitedSet(), edges={}}})
+  setmetatable(t, {__index={visited=graph.visitedSet(), edges={}}})
   local n, visited = t[1], t[2] or t.visited
   visited:add(n)
   if t.onVisit ~= nil then
@@ -136,12 +138,6 @@ function graph.traverse(t)
       graph.traverse{neighbor, visited, onVisit = t.onVisit}
     end
   end
-end
-
-function graph.draw(root)
-  graph.traverse{root, onVisit = function (node)
-    love.graphics.circle("line", node.data.x, node.data.y, 25)
-  end}
 end
 
 return graph
