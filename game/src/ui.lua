@@ -77,11 +77,12 @@ function ui.updateConnectionDragTarget(nodes, x, y)
   end
 end
 
-function ui.releaseConnectionDrag()
+function ui.releaseConnectionDrag(lambda)
   if ui.connect ~= nil then
     -- connect nodes if target is a node
     if ui.connect.target.data ~= nil and not ui.connect.start:isneighbor(ui.connect.target) then
-      ui.connect.start:connect(ui.connect.target)
+      lambda.onConnect(ui.connect.start, ui.connect.target)
+      -- ui.connect.start:connect(ui.connect.target)
     end
     ui.connect = nil
   end
@@ -130,7 +131,16 @@ local function drawGraph(nodes)
           local angleDelta = (2 * math.pi) / node.data.progress.max
           for i = 1, node.data.progress.max, 1 do
             if i <= node.data.progress.current then
-              love.graphics.setColor(unpack(palette['green'][3]))
+              if (node.data.goal.winners ~= nil and node.data.goal.winners[i] ~= nil) then
+                local winner = node.data.goal.winners[i]
+                if winner == "support" then
+                  love.graphics.setColor(unpack(palette['green'][3]))
+                elseif winner == "oppose" then
+                  love.graphics.setColor(unpack(palette['orange'][2]))
+                else
+                  love.graphics.setColor(unpack(palette['blue'][3]))
+                end
+              end
             else
               love.graphics.setColor(unpack(palette['green'][1]))
             end

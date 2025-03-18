@@ -11,11 +11,12 @@ local nodes = {}
 function love.load()
   levelmanager.init(nodes)
   levelmanager.load(1)
+  levelmanager.printlevel()
   overlayStats.load() -- Should always be called last
 end
 
 function love.draw()
-  ui.draw(nodes)
+  ui.draw(levelmanager.nodes)
   overlayStats.draw() -- Should always be called last
 end
 
@@ -33,7 +34,7 @@ end
 
 function love.mousepressed(x, y, istouch, presses)
   -- TODO: create screen to world coordinates function
-  ui.tryStartConnectionDrag(nodes, x/4, y/4)
+  ui.tryStartConnectionDrag(levelmanager.nodes, x/4, y/4)
   if ui.connect == nil then
     if ui.advance_button:isUnder(x/4, y/4) then
       ui.advance_button.pressed = true
@@ -43,22 +44,36 @@ end
 
 function love.mousemoved(x, y)
   if ui.connect ~= nil then
-    ui.updateConnectionDragTarget(nodes, x/4, y/4)
+    ui.updateConnectionDragTarget(levelmanager.nodes, x/4, y/4)
   end
 end
 
 function love.mousereleased(x, y)
-  ui.releaseConnectionDrag()
-  if ui.advance_button.pressed then
-    for _, node in ipairs(nodes) do
-      if node.data.active == true then
-        for _, neighbor in ipairs(node.neighbors) do
-          if neighbor.data.progress ~= nil then
-            neighbor.data.progress.current = neighbor.data.progress.current + 1
-          end
+  local lambda = {
+    onConnect = function(startNode, targetNode)
+      if (startNode.lambda ~= nil) then
+        -- support or oppose action check here
+        if (startNode.data.label == "player") then
+          startNode.lambda.support(targetNode)
+        else
+          startNode.lambda.oppose(targetNode)
         end
       end
     end
+  }
+  ui.releaseConnectionDrag(lambda)
+  if ui.advance_button.pressed then
+    -- for _, node in ipairs(nodes) do
+    --   if node.data.active == true then
+    --     for _, neighbor in ipairs(node.neighbors) do
+    --       if neighbor.data.progress ~= nil then
+    --         -- neighbor.data.progress.current = neighbor.data.progress.current + 1
+    --       end
+    --     end
+    --   end
+    -- end
+    levelmanager.checklevelprogress()
+    levelmanager.progressvote()
   end
   ui.advance_button.pressed = false
 end
