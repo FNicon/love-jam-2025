@@ -3,10 +3,10 @@ local character = require("src.gameplay.character.character")
 local characternode = {}
 
 function characternode.new(data)
-  local newchara = character.new(data.name)
-  local newnode = node.new(data.x, data.y, data.icon, data.name)
+  local newchara = character.new(data.label)
+  local newnode = node.new(data.x, data.y, data.icon, data.label)
   newnode.data.type = "character"
-  newnode.data.active = true
+  newnode.data.active = data.active
   newnode.data.character = newchara
 
   local lambda = {
