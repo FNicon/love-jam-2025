@@ -129,11 +129,11 @@ local function onEdge(x, y, edge)
                           edge.n2.data.x - edge.n1.data.x
   local edgeAngle = math.atan2(deltaY, deltaX)
   local edgeLength = math.sqrt(math.pow(deltaX, 2) + math.pow(deltaY, 2))
-  local hoverOffX, hoverOffY = x - edge.n1.data.x, y - edge.n2.data.y
+  local hoverOffX, hoverOffY = x - edge.n1.data.x, y - edge.n1.data.y
   local hoverOffLength = math.sqrt(math.pow(hoverOffX, 2) + math.pow(hoverOffY, 2))
   local hoverAngle = math.atan2(hoverOffY, hoverOffX) - edgeAngle
   local hoverToEdgeDist = math.abs(hoverOffLength * math.sin(hoverAngle))
-  local hoverEdgeLength = (math.cos(hoverAngle) * hoverOffLength)
+  local hoverEdgeLength = math.cos(hoverAngle) * hoverOffLength
   local hoverBetweenNodes =  hoverEdgeLength > 0 and hoverEdgeLength < edgeLength
   return hoverBetweenNodes and hoverToEdgeDist < 4
 end
