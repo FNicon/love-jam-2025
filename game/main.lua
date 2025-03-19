@@ -1,4 +1,4 @@
-local ui = require("src.ui")
+local ui = require("src.ui.ui")
 local overlayStats = require("lib.overlayStats")
 local graph = require("lib.graph")
 local palette = require("assets.palette")
@@ -12,11 +12,12 @@ function love.load()
   levelmanager.init(nodes)
   levelmanager.load(1)
   levelmanager.printlevel()
+  ui.init(levelmanager)
   overlayStats.load() -- Should always be called last
 end
 
 function love.draw()
-  ui.draw(levelmanager)
+  ui.draw()
   overlayStats.draw() -- Should always be called last
 end
 
@@ -33,50 +34,15 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, istouch, presses)
-  -- TODO: create screen to world coordinates function
-  ui.tryStartConnectionDrag(levelmanager.nodes, x/4, y/4)
-  if ui.connect == nil then
-    if ui.advance_button:isUnder(x/4, y/4) then
-      ui.advance_button.pressed = true
-    end
-  end
+  ui.mousepressed(x, y)
 end
 
 function love.mousemoved(x, y)
-  if ui.connect ~= nil then
-    ui.updateConnectionDragTarget(levelmanager.nodes, x/4, y/4)
-  end
+  ui.mousemoved(x, y)
 end
 
 function love.mousereleased(x, y)
-  local lambda = {
-    onConnect = function(startNode, targetNode)
-      if (startNode.lambda ~= nil) then
-        -- support or oppose action check here
-        if (startNode.data.label == "player") then
-          print("support")
-          startNode.lambda.support(targetNode)
-        else
-          startNode.lambda.oppose(targetNode)
-        end
-      end
-    end
-  }
-  ui.releaseConnectionDrag(lambda)
-  if ui.advance_button.pressed then
-    -- for _, node in ipairs(nodes) do
-    --   if node.data.active == true then
-    --     for _, neighbor in ipairs(node.neighbors) do
-    --       if neighbor.data.progress ~= nil then
-    --         -- neighbor.data.progress.current = neighbor.data.progress.current + 1
-    --       end
-    --     end
-    --   end
-    -- end
-    levelmanager.checklevelprogress()
-    levelmanager.progressvote()
-  end
-  ui.advance_button.pressed = false
+  ui.mousereleased(x, y)
 end
 
 function love.touchpressed(id, x, y, dx, dy, pressure)

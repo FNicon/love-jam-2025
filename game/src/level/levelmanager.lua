@@ -1,5 +1,5 @@
-local ui = require("src.ui")
 local votemanager = require("src.gameplay.vote.votemanager")
+local graph       = require("lib.graph")
 
 local levels = {
   require("src.level.level1"),
@@ -121,6 +121,23 @@ function levelmanager.printlevel()
   print("Current Level: " .. currentlevel)
   print("Level Name: " .. label)
   -- ui.print(label, x, y)
+end
+
+function levelmanager.collectEdges()
+  local edges = {}
+  local visited = graph.visitedSet()
+  for _, node in ipairs(levelmanager.nodes) do
+    if not visited:contains(node) then
+      graph.traverse{node, onVisit = function (node)
+        for _, neighbor in ipairs(node.neighbors) do
+          if not visited:contains(neighbor) then
+            table.insert(edges, graph.edge(node, neighbor))
+          end
+        end
+      end}
+    end
+  end
+  return edges
 end
 
 return levelmanager
