@@ -12,6 +12,10 @@ function votebox.new()
           local score = self.votesupport - self.voteoppose
           return score
         end,
+        resetvote = function(self)
+          self.votesupport = 0
+          self.voteoppose = 0
+        end,
         issupportwin = function(self)
           local score = self:countballots()
           return (score > 0)

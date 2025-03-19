@@ -23,6 +23,7 @@ end
 
 local function handlewinner(votebox)
   local result = votebox:decideresult()
+  votebox:resetvote()
   if result ~= "tie" then
     print(result)
     if result == "support" then
