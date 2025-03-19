@@ -14,6 +14,7 @@ ui.pixel_scale = 4
 ui.font = love.graphics.newFont("assets/m6x11.ttf", 16, "mono")
 ui.node_radius = 15
 ui.background_color = palette.blue[4]
+local highlightedEdge
 
 function ui.getWorldWidth()
   return love.graphics.getWidth() / ui.pixel_scale
@@ -88,7 +89,7 @@ end
 
 function ui.tryStartConnectionDrag( x, y)
   local foundNode = nodeAtLocation(x, y)
-  if foundNode ~= nil and foundNode.data.label == "player" then
+  if foundNode ~= nil then
     ui.startConnectionDrag(foundNode)
   end
 end
@@ -123,10 +124,31 @@ function ui.mousepressed(mouseX, mouseY)
   end
 end
 
+local function onEdge(x, y, edge)
+  local deltaY, deltaX =  edge.n2.data.y - edge.n1.data.y,
+                          edge.n2.data.x - edge.n1.data.x
+  local edgeAngle = math.atan2(deltaY, deltaX)
+  local edgeLength = math.sqrt(math.pow(deltaX, 2) + math.pow(deltaY, 2))
+  local hoverOffX, hoverOffY = x - edge.n1.data.x, y - edge.n2.data.y
+  local hoverOffLength = math.sqrt(math.pow(hoverOffX, 2) + math.pow(hoverOffY, 2))
+  local hoverAngle = math.atan2(hoverOffY, hoverOffX) - edgeAngle
+  local hoverToEdgeDist = math.abs(hoverOffLength * math.sin(hoverAngle))
+  local hoverEdgeLength = (math.cos(hoverAngle) * hoverOffLength)
+  local hoverBetweenNodes =  hoverEdgeLength > 0 and hoverEdgeLength < edgeLength
+  return hoverBetweenNodes and hoverToEdgeDist < 4
+end
+
 function ui.mousemoved(mouseX, mouseY)
   local x, y = ui.getWorldCoords(mouseX, mouseY)
   if ui.connect ~= nil then
     ui.updateConnectionDragTarget(x, y)
+  end
+  highlightedEdge = nil
+  for _, edge in ipairs(_levelmanager.collectEdges()) do
+    if (onEdge(x, y, edge)) then
+      highlightedEdge = edge
+      break
+    end
   end
 end
 
@@ -137,7 +159,6 @@ function ui.mousereleased(mouseX, mouseY)
       if (startNode.lambda ~= nil) then
         -- support or oppose action check here
         if (startNode.data.label == "player") then
-          print("support")
           startNode.lambda.support(targetNode)
         else
           startNode.lambda.oppose(targetNode)
@@ -151,6 +172,9 @@ function ui.mousereleased(mouseX, mouseY)
     _levelmanager.progressvote()
   end
   ui.advance_button.pressed = false
+  if highlightedEdge ~= nil then
+    highlightedEdge.n1:disconnect(highlightedEdge.n2)
+  end
 end
 
 local function drawConnectionLineFromNodeToNode(from, to)
@@ -162,6 +186,15 @@ local function drawConnectionLineFromNodeToNode(from, to)
                             from.data.y + math.sin(angle) * ui.node_radius
   local end_x, end_y =  to.data.x - math.cos(angle) * ui.node_radius,
                         to.data.y - math.sin(angle) * ui.node_radius
+  if (highlightedEdge ~= nil) and
+    ((from == highlightedEdge.n1 and to == highlightedEdge.n2) or
+      (from == highlightedEdge.n2 and to == highlightedEdge.n1))
+  then
+    -- is highlightedEdge
+    love.graphics.setColor(unpack(palette['orange'][2]))
+  else
+    love.graphics.setColor(unpack(palette['orange'][3]))
+  end
   love.graphics.line(start_x, start_y, end_x, end_y)
 end
 
