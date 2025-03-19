@@ -1,5 +1,5 @@
 local votemanager = require("src.gameplay.vote.votemanager")
-local graph       = require("lib.graph")
+local graph       = require("src.data.graph")
 
 local levels = {
   require("src.level.level1"),

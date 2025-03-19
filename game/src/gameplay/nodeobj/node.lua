@@ -1,4 +1,4 @@
-local graph = require("lib.graph")
+local graph = require("src.data.graph")
 
 local node = {}
 

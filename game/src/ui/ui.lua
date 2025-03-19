@@ -1,4 +1,4 @@
-local graph = require("lib.graph")
+local graph = require("src.data.graph")
 local palette = require("assets.palette")
 local icons = require("assets.icons")
 local buffer = require("src.ui.buffer")

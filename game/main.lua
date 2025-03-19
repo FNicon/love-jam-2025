@@ -1,6 +1,6 @@
 local ui = require("src.ui.ui")
 local overlayStats = require("lib.overlayStats")
-local graph = require("lib.graph")
+local graph = require("src.data.graph")
 local palette = require("assets.palette")
 local icons = require("assets.icons")
 local levelmanager = require("src.level.levelmanager")
