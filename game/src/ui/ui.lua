@@ -34,37 +34,62 @@ function ui.init(levelmanager)
   buffer:init(ui.getWorldWidth(), ui.getWorldHeight(), ui.pixel_scale)
 end
 
-ui.advance_button = {
-  pressed = false,
-  x = ui.getWorldWidth() - 60,
-  y = ui.getWorldHeight() - 60,
-  radius = math.floor(icons.ui.advance_button.up:getWidth() / 2),
-  label = "advance",
-  isUnder = function (self, x, y)
-    local distance = math.sqrt(
-      math.pow(self.x - x, 2) +
-      math.pow(self.y - y, 2)
-    )
-    return distance < self.radius
-  end,
-  draw = function (self)
-    local icon
-    if self.pressed then
-      icon = icons.ui.advance_button.down
-    else
-      icon = icons.ui.advance_button.up
+local function Button (label, icon_up, icon_down, x, y, onClick)
+  return {
+    pressed = false,
+    x = x,
+    y = y,
+    label = label,
+    icon_up = icon_up,
+    icon_down = icon_down,
+    onClick = onClick,
+    isUnder = function (self, x, y)
+      return math.abs(x - self.x) < math.floor(self.icon_up:getWidth()/2)
+        and math.abs(y - self.y) < math.floor(self.icon_up:getHeight()/2)
+    end,
+    draw = function (self)
+      local icon
+      if self.pressed then
+        icon = self.icon_down
+      else
+        icon = self.icon_up
+      end
+      love.graphics.draw(
+        icon,
+        self.x - math.floor(icon:getWidth() / 2),
+        self.y - math.floor(icon:getHeight() / 2)
+      )
+      love.graphics.print(
+        self.label,
+        self.x - math.floor(ui.font:getWidth(self.label)/2),
+        self.y + math.ceil(icon:getHeight() * .8)
+      )
     end
-    love.graphics.draw(
-      icon,
-      self.x - self.radius,
-      self.y - self.radius
-    )
-    love.graphics.print(
-      self.label,
-      self.x - math.floor(ui.font:getWidth(self.label)/2),
-      self.y + math.ceil(self.radius * 1.5)
-    )
-  end
+  }
+end
+
+ui.buttons = {
+  Button(
+    'advance',
+    icons.ui.advance_button.up,
+    icons.ui.advance_button.down,
+    ui.getWorldWidth() - 60,
+    ui.getWorldHeight() - 60,
+    function ()
+      _levelmanager.checklevelprogress()
+      _levelmanager.progressvote()
+    end
+  ),
+  Button(
+    'reset',
+    icons.ui.reset_button.up,
+    icons.ui.reset_button.down,
+    ui.getWorldWidth() - 120,
+    ui.getWorldHeight() - 60,
+    function ()
+      _levelmanager.restartlevel()
+    end
+  )
 }
 
 local function nodeAtLocation(x, y)
@@ -118,8 +143,12 @@ function ui.mousepressed(mouseX, mouseY)
   local x, y = ui.getWorldCoords(mouseX, mouseY)
   ui.tryStartConnectionDrag(x, y)
   if ui.connect == nil then
-    if ui.advance_button:isUnder(x, y) then
-      ui.advance_button.pressed = true
+    for _, button in ipairs(ui.buttons) do
+      if button:isUnder(x, y) then
+        button.pressed = true
+      else
+        button.pressed = false
+      end
     end
   end
 end
@@ -167,11 +196,12 @@ function ui.mousereleased(mouseX, mouseY)
     end
   }
   ui.releaseConnectionDrag(lambda)
-  if ui.advance_button.pressed then
-    _levelmanager.checklevelprogress()
-    _levelmanager.progressvote()
+  for _, button in ipairs(ui.buttons) do
+    if button.pressed then
+      button.onClick()
+    end
+    button.pressed = false
   end
-  ui.advance_button.pressed = false
   if highlightedEdge ~= nil then
     highlightedEdge.n1:disconnect(highlightedEdge.n2)
   end
@@ -297,7 +327,9 @@ local function drawLevelInfo()
 end
 
 local function drawInterface()
-  ui.advance_button:draw()
+  for _, button in ipairs(ui.buttons) do
+    button:draw()
+  end
 end
 
 function ui.draw()

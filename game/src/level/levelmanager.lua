@@ -24,16 +24,17 @@ function levelmanager.load(index)
     currentlevel = index
     local level = levels[index]
     levelmanager.currentlevelname = level.name
-    for name, node in pairs(level.info.nodes) do
-      if level.info.connections[name] ~= nil then
-        if level.info.connections[name]["oppose"] ~= nil then
-          for _, nodename in ipairs(level.info.connections[name]["oppose"]) do
-            node.lambda.oppose(level.info.nodes[nodename])
+    local levelinfo = level.load()
+    for name, node in pairs(levelinfo.nodes) do
+      if levelinfo.connections[name] ~= nil then
+        if levelinfo.connections[name]["oppose"] ~= nil then
+          for _, nodename in ipairs(levelinfo.connections[name]["oppose"]) do
+            node.lambda.oppose(levelinfo.nodes[nodename])
           end
         end
-        if level.info.connections[name]["support"] ~= nil then
-          for _, nodename in ipairs(level.info.connections[name]["support"]) do
-            node.lambda.support(level.info.nodes[nodename])
+        if levelinfo.connections[name]["support"] ~= nil then
+          for _, nodename in ipairs(levelinfo.connections[name]["support"]) do
+            node.lambda.support(levelinfo.nodes[nodename])
           end
         end
       end
@@ -102,6 +103,7 @@ function levelmanager.restartlevel()
   if currentlevel == nil then
     error("No level loaded")
   else
+    print("restarting")
     levelmanager.load(currentlevel)
   end
 end
