@@ -7,28 +7,31 @@ local level = {}
 level.name = "Two Doors"
 -- level1.icon = icons.level[1]
 
-function level.load(nodes)
-  table.insert(nodes, characternode.new{
-    x = ui.buffer:getWidth() / 2 - 60,
-    y = ui.buffer:getHeight() / 2,
-    icon = icons.character[1],
-    label = 'player',
-    active = true
-  })
-  table.insert(nodes, goalnode.new{
-    x = ui.buffer:getWidth() / 2 + 60,
-    y = ui.buffer:getHeight() / 2,
-    icon = icons.object.door,
-    label = 'find exit',
-    progress = {max = 4, current = 0}
-  })
-  table.insert(nodes, goalnode.new{
-    x = ui.buffer:getWidth() / 2,
-    y = ui.buffer:getHeight() / 2 + 60,
-    icon = icons.object.door,
-    label = 'find exit',
-    progress = {max = 4, current = 0}
-  })
-end
+level.info = {
+  nodes = {
+    player = characternode.new{
+      x = ui.buffer:getWidth() / 2 - 60,
+      y = ui.buffer:getHeight() / 2,
+      icon = icons.character[1],
+      label = 'player',
+      active = true
+    },
+    door1 = goalnode.new{
+      x = ui.buffer:getWidth() / 2 + 60,
+      y = ui.buffer:getHeight() / 2,
+      icon = icons.object.door,
+      label = 'check door',
+      progress = {max = 4, current = 0}
+    },
+    door2 = goalnode.new{
+      x = ui.buffer:getWidth() / 2,
+      y = ui.buffer:getHeight() / 2 + 60,
+      icon = icons.object.door,
+      label = 'check door',
+      progress = {max = 4, current = 0}
+    }
+  },
+  connections = {}
+}
 
 return level

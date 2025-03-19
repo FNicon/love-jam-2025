@@ -15,13 +15,30 @@ local currentvotemanager = {}
 
 function levelmanager.init(nodes)
   levelmanager.nodes = nodes
+  levelmanager.currentlevelname = "No Level Loaded"
 end
 
 function levelmanager.load(index)
   levelmanager.nodes = {}
   if index <= #levels then
     currentlevel = index
-    levels[index].load(levelmanager.nodes)
+    local level = levels[index]
+    levelmanager.currentlevelname = level.name
+    for name, node in pairs(level.info.nodes) do
+      if level.info.connections[name] ~= nil then
+        if level.info.connections[name]["oppose"] ~= nil then
+          for _, nodename in ipairs(level.info.connections[name]["oppose"]) do
+            node.lambda.oppose(level.info.nodes[nodename])
+          end
+        end
+        if level.info.connections[name]["support"] ~= nil then
+          for _, nodename in ipairs(level.info.connections[name]["support"]) do
+            node.lambda.support(level.info.nodes[nodename])
+          end
+        end
+      end
+      table.insert(levelmanager.nodes, node)
+    end
     currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
     currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
     currentvotemanager = votemanager.new()

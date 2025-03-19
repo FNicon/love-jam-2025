@@ -119,11 +119,16 @@ local function drawConnectionLine(from, to)
   end
 end
 
-local function drawGraph(nodes)
+local function drawGraph(levelmanager)
   local visited = graph.visitedSet()
   local edges = {}
   love.graphics.setFont(ui.font)
-  for _, node in ipairs(nodes) do
+  love.graphics.print(
+    levelmanager.currentlevelname,
+    (ui.buffer:getWidth() - ui.font:getWidth(levelmanager.currentlevelname)) / 2,
+    10
+  )
+  for _, node in ipairs(levelmanager.nodes) do
     if not visited:contains(node) then
       graph.traverse{node, onVisit = function (node)
         -- node progress
@@ -177,7 +182,7 @@ local function drawGraph(nodes)
           love.graphics.print(
             node.data.label,
             node.data.x - ui.font:getWidth(node.data.label) / 2,
-            node.data.y - ui.node_radius * 3
+            node.data.y - ui.node_radius * 2.5
           )
         end
         -- collect edges

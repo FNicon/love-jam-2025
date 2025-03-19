@@ -16,7 +16,7 @@ function love.load()
 end
 
 function love.draw()
-  ui.draw(levelmanager.nodes)
+  ui.draw(levelmanager)
   overlayStats.draw() -- Should always be called last
 end
 
@@ -54,6 +54,7 @@ function love.mousereleased(x, y)
       if (startNode.lambda ~= nil) then
         -- support or oppose action check here
         if (startNode.data.label == "player") then
+          print("support")
           startNode.lambda.support(targetNode)
         else
           startNode.lambda.oppose(targetNode)
