@@ -1,39 +1,74 @@
+local voteutils = require("src.gameplay.vote.voteutils")
+
 local votebox = {}
 
 function votebox.new()
     local newVotebox = {
         participantcount = function(self)
-          return self.votesupport + self.voteoppose
+          local count = 0
+          for _, storage in pairs(self.votestorages) do
+            count = count + storage.count
+          end
+          return count
         end,
         goal = {},
-        votesupport = 0,
-        voteoppose = 0,
+        votestorages = {},
+        drawstorages = {},
+        voteside = function(self, side, weight)
+          for _, storage in pairs(self.votestorages) do
+            if (storage.progress and storage.label == side) then
+              if (weight ~= nil and weight > 0) then
+                storage.count = storage.count + 1 * weight
+              end
+              break
+            end
+          end
+        end,
+        definedraw = function(self)
+          local useddraw = ""
+          for _, storage in pairs(self.drawstorages) do
+            useddraw = storage.label
+            break
+          end
+          return useddraw
+        end,
         countballots = function(self)
-          local score = self.votesupport - self.voteoppose
+          local score = 0
+          for _, storage in pairs(self.votestorages) do
+            if (storage.progress and storage.count > score) then
+              score = storage.count
+            end
+          end
           return score
         end,
         resetvote = function(self)
-          self.votesupport = 0
-          self.voteoppose = 0
+          self.votestorages = voteutils.initvotetypestorages()
+          self.drawstorages = voteutils.initdrawstorages()
         end,
-        issupportwin = function(self)
-          local score = self:countballots()
-          return (score > 0)
-        end,
-        isopposewin = function(self)
-          local score = self:countballots()
-          return (score < 0)
+        getwinners = function(self)
+          local maxscore = self:countballots()
+          local winners = {}
+          for _, storage in pairs(self.votestorages) do
+            if (storage.progress and storage.count == maxscore) then
+              table.insert(winners, storage.label)
+            end
+          end
+          return winners
         end,
         decideresult = function(self)
-          if self:issupportwin() then
-            return "support"
-          elseif self:isopposewin() then
-            return "oppose"
+          local winners = self:getwinners()
+          if not self:isdraw() then
+            return winners[1]
           else
-            return "tie"
+            return self:definedraw()
           end
         end,
+        isdraw = function(self)
+          local winners = self:getwinners()
+          return #winners ~= 1
+        end,
     }
+    newVotebox:resetvote()
     return newVotebox
 end
 

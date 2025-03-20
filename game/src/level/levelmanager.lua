@@ -1,5 +1,6 @@
 local votemanager = require("src.gameplay.vote.votemanager")
 local graph       = require("src.data.graph")
+local distancecalculator = require("src.data.distance")
 local grid        = require("src.data.grid")
 local characternode = require("src.gameplay.character.characternode")
 local goalnode      = require("src.gameplay.goal.goalnode")
@@ -15,6 +16,7 @@ local currentlevel = 0
 local currentgoals = {}
 local currentparticipants = {}
 local currentvotemanager = {}
+local turncount = 0
 
 function levelmanager.init(nodes)
   levelmanager.nodes = nodes
@@ -29,7 +31,8 @@ local function createCharacterNode(info)
     y = worldy,
     icon = info.icon,
     label = info.label,
-    active = info.active
+    active = info.active,
+    maxlength = info.maxlength,
   }
 end
 
@@ -40,14 +43,17 @@ local function createGoalNode(info)
     y = worldy,
     icon = info.icon,
     label = info.label,
-    progress = {max = info.progressmax, current = 0}
+    progress = {max = info.progressmax, current = 0},
+    maxlength = info.maxlength,
   }
 end
 
 function levelmanager.load(index)
+  print("Loading Level " .. index)
   levelmanager.nodes = {}
   if index <= #levels then
     currentlevel = index
+    turncount = 0
     local level = levels[index]
     levelmanager.currentlevelname = level.name
     local levelinfo = level.load()
@@ -64,16 +70,12 @@ function levelmanager.load(index)
     end
     for name, node in pairs(nodemap) do
       if levelinfo.connections[name] ~= nil then
-        if levelinfo.connections[name]["oppose"] ~= nil then
-          for _, nodename in ipairs(levelinfo.connections[name]["oppose"]) do
-            print(nodename)
-            node.lambda.oppose(nodemap[nodename])
-          end
-        end
-        if levelinfo.connections[name]["support"] ~= nil then
-          for _, nodename in ipairs(levelinfo.connections[name]["support"]) do
-            node.lambda.support(nodemap[nodename])
-          end
+        local side = levelinfo.connections[name].side
+        local targetname = levelinfo.connections[name].nodes
+        for _, target in ipairs(targetname) do
+          local length = distancecalculator.worldToGridDistance(levelmanager.grid, node.data.x, node.data.y, nodemap[target].data.x, nodemap[target].data.y)
+          print("connection distance ", length)
+          node.lambda.pickside(nodemap[target], side, length)
         end
       end
     end
@@ -84,11 +86,14 @@ function levelmanager.load(index)
   else
     error("Level not found: " .. index)
   end
+  print("Level loaded successfully")
 end
 
 function levelmanager.progressvote()
+  turncount = turncount + 1
+  print("Start vote turn ", turncount)
   if not levelmanager.islevelcompleted() then
-    currentvotemanager:startvote(currentparticipants)
+    currentvotemanager:startvote(currentparticipants, currentgoals)
     currentvotemanager:endvote()
   end
 end
@@ -99,7 +104,6 @@ function levelmanager.islevelcompleted()
   else
     local foundunfinishedgoal = false
     for _, goal in ipairs(currentgoals) do
-      print(goal.data.goal.state)
       if goal.data.goal.state ~= "decided" then
         foundunfinishedgoal = true
         break
@@ -123,9 +127,10 @@ function levelmanager.islevelwin()
 end
 
 function levelmanager.checklevelprogress()
+  local islevelstillinprogress = true
   if levelmanager.islevelcompleted() then
     print("Level completed!")
-    print(levelmanager.islevelwin())
+    islevelstillinprogress = false
     if levelmanager.islevelwin() then
       levelmanager.loadnextlevel()
     else
@@ -134,6 +139,7 @@ function levelmanager.checklevelprogress()
   else
     print("Level in progress...")
   end
+  return islevelstillinprogress
 end
 
 function levelmanager.restartlevel()
