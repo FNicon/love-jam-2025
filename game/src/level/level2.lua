@@ -15,21 +15,24 @@ level.load = function ()
         y = ui.getWorldHeight() / 2,
         icon = icons.character[1],
         label = 'player',
-        active = true
+        active = true,
+        maxlength = 200,
       },
       door1 = goalnode.new{
         x = ui.getWorldWidth() / 2 + 60,
         y = ui.getWorldHeight() / 2,
         icon = icons.object.door,
         label = 'check door',
-        progress = {max = 4, current = 0}
+        progress = {max = 4, current = 0},
+        maxlength = 200,
       },
       door2 = goalnode.new{
         x = ui.getWorldWidth() / 2,
         y = ui.getWorldHeight() / 2 + 60,
         icon = icons.object.door,
         label = 'check door',
-        progress = {max = 4, current = 0}
+        progress = {max = 4, current = 0},
+        maxlength = 200,
       }
     },
     connections = {}

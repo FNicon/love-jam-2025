@@ -1,4 +1,6 @@
 local votebox = require("src.gameplay.vote.votebox")
+local voteutils = require("src.gameplay.vote.voteutils")
+
 local votemanager = {}
 
 function votemanager.retrieveallgoals(nodes)
@@ -23,35 +25,47 @@ end
 
 local function handlewinner(votebox)
   local result = votebox:decideresult()
-  votebox:resetvote()
-  if result ~= "tie" then
-    print(result)
-    if result == "support" then
-      table.insert(votebox.goal.data.goal.winners, "support")
-    else
-      table.insert(votebox.goal.data.goal.winners, "oppose")
+  if not votebox:isdraw() then
+    if (votebox.goal.data.progress.max > votebox.goal.data.progress.current) then
+      table.insert(votebox.goal.data.goal.winners, result)
     end
   else
       -- do something else here
   end
+  votebox:resetvote()
   votebox.goal.data.progress.current = #votebox.goal.data.goal.winners
   if votebox.goal.data.progress.current == votebox.goal.data.progress.max then
-    votebox.goal.data.goal.state = "decided"
-    local supportcount = 0
-    local opposecount = 0
+    local votestorages = voteutils.initvotetypestorages()
     for _, winner in ipairs(votebox.goal.data.goal.winners) do
-      if (winner == "support") then
-        supportcount = supportcount + 1
-      else
-        opposecount = opposecount + 1
+      for _, storage in pairs(votestorages) do
+         if winner == storage.label then
+              storage.count = storage.count + 1
+          end
       end
     end
-    if supportcount > opposecount then
-      votebox.goal.data.goal.winner = "support"
-    elseif opposecount > supportcount then
-      votebox.goal.data.goal.winner = "oppose"
+    local maxscore = 0
+    for _, storage in pairs(votestorages) do
+      if storage.progress and storage.count > maxscore then
+          maxscore = storage.count
+      end
+    end
+    local winners = {}
+    for _, storage in pairs(votestorages) do
+      if storage.progress and storage.count == maxscore then
+          table.insert(winners, storage.label)
+      end
+    end
+    if #winners == 1 then
+      votebox.goal.data.goal.winner = winners[1]
+      votebox.goal.data.goal.state = "decided"
     else
-      votebox.goal.data.goal.winner = "tie"
+      local useddraw = ""
+      local drawstorages = voteutils.initdrawstorages()
+      for _, storage in pairs(drawstorages) do
+        useddraw = storage.label
+        break
+      end
+      votebox.goal.data.goal.winner = useddraw
     end
   end
 end
@@ -84,11 +98,14 @@ function votemanager.new()
                 self:addvotebox(goal)
             end
         end,
-        startvote = function(self, participants)
+        startvote = function(self, participants, goals)
           for _, vb in ipairs(self.voteboxes) do
               for _, participant in ipairs(participants) do
                 if participant ~= nil then
-                  participant.lambda.vote(vb)
+                  local edge = participant:getedge(vb.goal)
+                  if edge ~= nil then
+                    participant.lambda.vote(vb, edge.label)
+                  end
                 end
               end
             end
