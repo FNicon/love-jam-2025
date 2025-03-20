@@ -73,8 +73,8 @@ function levelmanager.load(index)
         local side = levelinfo.connections[name].side
         local targetname = levelinfo.connections[name].nodes
         for _, target in ipairs(targetname) do
-          local length = distancecalculator.manhattan(node.data.x, node.data.y, nodemap[target].data.x, nodemap[target].data.y)
-          print(length)
+          local length = distancecalculator.worldToGridDistance(levelmanager.grid, node.data.x, node.data.y, nodemap[target].data.x, nodemap[target].data.y)
+          print("connection distance ", length)
           node.lambda.pickside(nodemap[target], side, length)
         end
       end
