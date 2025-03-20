@@ -10,29 +10,33 @@ level.name = "Two Doors"
 level.load = function ()
   return {
     nodes = {
-      player = characternode.new{
-        x = ui.getWorldWidth() / 2 - 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.character[1],
-        label = 'player',
-        active = true,
-        maxlength = 200,
+      characters = {
+        player = {
+          x = 3,
+          y = 2,
+          icon = icons.character[1],
+          label = 'player',
+          active = true,
+          maxlength = 200,
+        }
       },
-      door1 = goalnode.new{
-        x = ui.getWorldWidth() / 2 + 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.object.door,
-        label = 'check door',
-        progress = {max = 4, current = 0},
-        maxlength = 200,
-      },
-      door2 = goalnode.new{
-        x = ui.getWorldWidth() / 2,
-        y = ui.getWorldHeight() / 2 + 60,
-        icon = icons.object.door,
-        label = 'check door',
-        progress = {max = 4, current = 0},
-        maxlength = 200,
+      goals = {
+        door1 = {
+          x = 4,
+          y = 1,
+          icon = icons.object.door,
+          label = 'Check door',
+          progressmax = 4,
+          maxlength = 200,
+        },
+        door2 = {
+          x = 4,
+          y = 3,
+          icon = icons.object.door,
+          label = 'Check door',
+          progressmax = 4,
+          maxlength = 200,
+        }
       }
     },
     connections = {}

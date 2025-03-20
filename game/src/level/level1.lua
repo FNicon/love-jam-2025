@@ -10,21 +10,25 @@ level.name = "The First Door"
 level.load = function ()
   return {
     nodes = {
-      player = characternode.new{
-        x = ui.getWorldWidth() / 2 - 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.character[1],
-        label = 'player',
-        active = true,
-        maxlength = 200,
+      characters = {
+        player = {
+          x = 3,
+          y = 2,
+          icon = icons.character[1],
+          label = 'player',
+          active = true,
+          maxlength = 200,
+        }
       },
-      door = goalnode.new{
-        x = ui.getWorldWidth() / 2 + 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.object.door,
-        label = 'Find exit',
-        progress = {max = 4, current = 0},
-        maxlength = 200,
+      goals = {
+        door = {
+          x = 4,
+          y = 2,
+          icon = icons.object.door,
+          label = 'Find exit',
+          progressmax = 4,
+          maxlength = 200,
+        }
       }
     },
     connections = {}

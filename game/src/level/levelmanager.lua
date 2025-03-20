@@ -1,6 +1,9 @@
 local votemanager = require("src.gameplay.vote.votemanager")
 local graph       = require("src.data.graph")
 local distancecalculator = require("src.data.distance")
+local grid        = require("src.data.grid")
+local characternode = require("src.gameplay.character.characternode")
+local goalnode      = require("src.gameplay.goal.goalnode")
 
 local levels = {
   require("src.level.level1"),
@@ -13,10 +16,36 @@ local currentlevel = 0
 local currentgoals = {}
 local currentparticipants = {}
 local currentvotemanager = {}
+local turncount = 0
 
 function levelmanager.init(nodes)
   levelmanager.nodes = nodes
   levelmanager.currentlevelname = "No Level Loaded"
+  levelmanager.grid = grid.new(60)
+end
+
+local function createCharacterNode(info)
+  local worldx, worldy = levelmanager.grid:gridToWorldCoords(info.x, info.y)
+  return characternode.new{
+    x = worldx,
+    y = worldy,
+    icon = info.icon,
+    label = info.label,
+    active = info.active,
+    maxlength = info.maxlength,
+  }
+end
+
+local function createGoalNode(info)
+  local worldx, worldy = levelmanager.grid:gridToWorldCoords(info.x, info.y)
+  return goalnode.new{
+    x = worldx,
+    y = worldy,
+    icon = info.icon,
+    label = info.label,
+    progress = {max = info.progressmax, current = 0},
+    maxlength = info.maxlength,
+  }
 end
 
 function levelmanager.load(index)
@@ -24,23 +53,31 @@ function levelmanager.load(index)
   levelmanager.nodes = {}
   if index <= #levels then
     currentlevel = index
+    turncount = 0
     local level = levels[index]
     levelmanager.currentlevelname = level.name
     local levelinfo = level.load()
-    for name, node in pairs(levelinfo.nodes) do
+    local nodemap = {}
+    for name, info in pairs(levelinfo.nodes.characters) do
+      local node = createCharacterNode(info)
+      table.insert(levelmanager.nodes, node)
+      nodemap[name] = node
+    end
+    for name, info in pairs(levelinfo.nodes.goals) do
+      local node = createGoalNode(info)
+      table.insert(levelmanager.nodes, node)
+      nodemap[name] = node
+    end
+    for name, node in pairs(nodemap) do
       if levelinfo.connections[name] ~= nil then
         local side = levelinfo.connections[name].side
         local targetname = levelinfo.connections[name].nodes
         for _, target in ipairs(targetname) do
-          for checktarget, targetnode in pairs(levelinfo.nodes) do
-            if checktarget == target then
-              local length = distancecalculator.manhattan(node.data.x, node.data.y, targetnode.data.x, targetnode.data.y)
-              node.lambda.pickside(targetnode, side, length)
-            end
-          end
+          local length = distancecalculator.manhattan(node.data.x, node.data.y, nodemap[target].data.x, nodemap[target].data.y)
+          print(length)
+          node.lambda.pickside(nodemap[target], side, length)
         end
       end
-      table.insert(levelmanager.nodes, node)
     end
     currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
     currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
@@ -49,9 +86,12 @@ function levelmanager.load(index)
   else
     error("Level not found: " .. index)
   end
+  print("Level loaded successfully")
 end
 
 function levelmanager.progressvote()
+  turncount = turncount + 1
+  print("Start vote turn ", turncount)
   if not levelmanager.islevelcompleted() then
     currentvotemanager:startvote(currentparticipants, currentgoals)
     currentvotemanager:endvote()
@@ -87,8 +127,10 @@ function levelmanager.islevelwin()
 end
 
 function levelmanager.checklevelprogress()
+  local islevelstillinprogress = true
   if levelmanager.islevelcompleted() then
     print("Level completed!")
+    islevelstillinprogress = false
     if levelmanager.islevelwin() then
       levelmanager.loadnextlevel()
     else
@@ -97,6 +139,7 @@ function levelmanager.checklevelprogress()
   else
     print("Level in progress...")
   end
+  return islevelstillinprogress
 end
 
 function levelmanager.restartlevel()

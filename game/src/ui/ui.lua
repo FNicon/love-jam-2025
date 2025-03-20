@@ -12,7 +12,6 @@ local lastdrawny = 0
 --- TODO: make sure this is deterministically run before loading any assets
 love.graphics.setDefaultFilter("nearest", "nearest", 1)
 love.graphics.setLineStyle("rough")
-love.graphics.setLineWidth(3)
 
 ui.pixel_scale = 4
 ui.font = love.graphics.newFont("assets/m6x11.ttf", 16, "mono")
@@ -20,6 +19,8 @@ ui.node_radius = 15
 ui.background_color = palette.blue[4]
 local highlightedEdge
 
+-- world coordinates are based on the upscaling of the buffer by the pixel_scale
+-- the buffer we draw to
 function ui.getWorldWidth()
   return love.graphics.getWidth() / ui.pixel_scale
 end
@@ -80,8 +81,10 @@ ui.buttons = {
     ui.getWorldWidth() - 60,
     ui.getWorldHeight() - 60,
     function ()
-      _levelmanager.checklevelprogress()
-      _levelmanager.progressvote()
+      local levelinprogress = _levelmanager.checklevelprogress()
+      if (levelinprogress) then
+        _levelmanager.progressvote()
+      end
     end
   ),
   Button(
@@ -118,7 +121,7 @@ end
 
 function ui.tryStartConnectionDrag( x, y)
   local foundNode = nodeAtLocation(x, y)
-  if foundNode ~= nil then
+  if foundNode ~= nil and foundNode.data.label == "player" then
     ui.startConnectionDrag(foundNode)
   end
 end
@@ -187,7 +190,7 @@ function ui.mousemoved(mouseX, mouseY)
   end
   highlightedEdge = nil
   for _, edge in ipairs(_levelmanager.collectEdges()) do
-    if (onEdge(x, y, edge)) then
+    if (onEdge(x, y, edge)) and (edge.n1.data.label == "player" or edge.n2.data.label == "player") then
       highlightedEdge = edge
       break
     end
@@ -249,6 +252,7 @@ local function drawConnectionLineFromNodeToPosition(from, to)
 end
 
 local function drawConnectionLine(from, to)
+  love.graphics.setLineWidth(3)
   -- assume if to is not a node then it is a table with {x =,y=}
   if to.data ~= nil then
     drawConnectionLineFromNodeToNode(from, to)
@@ -258,6 +262,7 @@ local function drawConnectionLine(from, to)
 end
 
 local function drawNodes()
+  love.graphics.setLineWidth(2)
   for _, node in ipairs(_levelmanager.nodes) do
     if node.data.progress ~= nil then
       local angleDelta = (2 * math.pi) / node.data.progress.max
@@ -296,7 +301,7 @@ local function drawNodes()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(node.data.icon, node.data.x - ui.node_radius, node.data.y - ui.node_radius)
     -- node outline
-    love.graphics.setColor(unpack(palette['orange'][3]))
+    love.graphics.setColor(unpack(palette['green'][4]))
     love.graphics.circle("line", node.data.x, node.data.y, ui.node_radius)
     -- node label
     if node.data.label ~= nil then
@@ -304,7 +309,7 @@ local function drawNodes()
       love.graphics.print(
         node.data.label,
         node.data.x - ui.font:getWidth(node.data.label) / 2,
-        node.data.y - ui.node_radius * 2.5
+        node.data.y + ui.node_radius
       )
     end
   end
