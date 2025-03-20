@@ -1,5 +1,8 @@
 local votemanager = require("src.gameplay.vote.votemanager")
 local graph       = require("src.data.graph")
+local grid        = require("src.data.grid")
+local characternode = require("src.gameplay.character.characternode")
+local goalnode      = require("src.gameplay.goal.goalnode")
 
 local levels = {
   require("src.level.level1"),
@@ -16,6 +19,29 @@ local currentvotemanager = {}
 function levelmanager.init(nodes)
   levelmanager.nodes = nodes
   levelmanager.currentlevelname = "No Level Loaded"
+  levelmanager.grid = grid.new(60)
+end
+
+local function createCharacterNode(info)
+  local worldx, worldy = levelmanager.grid:gridToWorldCoords(info.x, info.y)
+  return characternode.new{
+    x = worldx,
+    y = worldy,
+    icon = info.icon,
+    label = info.label,
+    active = info.active
+  }
+end
+
+local function createGoalNode(info)
+  local worldx, worldy = levelmanager.grid:gridToWorldCoords(info.x, info.y)
+  return goalnode.new{
+    x = worldx,
+    y = worldy,
+    icon = info.icon,
+    label = info.label,
+    progress = {max = info.progressmax, current = 0}
+  }
 end
 
 function levelmanager.load(index)
@@ -25,20 +51,31 @@ function levelmanager.load(index)
     local level = levels[index]
     levelmanager.currentlevelname = level.name
     local levelinfo = level.load()
-    for name, node in pairs(levelinfo.nodes) do
+    local nodemap = {}
+    for name, info in pairs(levelinfo.nodes.characters) do
+      local node = createCharacterNode(info)
+      table.insert(levelmanager.nodes, node)
+      nodemap[name] = node
+    end
+    for name, info in pairs(levelinfo.nodes.goals) do
+      local node = createGoalNode(info)
+      table.insert(levelmanager.nodes, node)
+      nodemap[name] = node
+    end
+    for name, node in pairs(nodemap) do
       if levelinfo.connections[name] ~= nil then
         if levelinfo.connections[name]["oppose"] ~= nil then
           for _, nodename in ipairs(levelinfo.connections[name]["oppose"]) do
-            node.lambda.oppose(levelinfo.nodes[nodename])
+            print(nodename)
+            node.lambda.oppose(nodemap[nodename])
           end
         end
         if levelinfo.connections[name]["support"] ~= nil then
           for _, nodename in ipairs(levelinfo.connections[name]["support"]) do
-            node.lambda.support(levelinfo.nodes[nodename])
+            node.lambda.support(nodemap[nodename])
           end
         end
       end
-      table.insert(levelmanager.nodes, node)
     end
     currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
     currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)

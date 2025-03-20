@@ -13,6 +13,7 @@ function love.load()
   levelmanager.load(1)
   levelmanager.printlevel()
   ui.init(levelmanager)
+  print(ui:getWorldWidth(), ui:getWorldHeight())
   overlayStats.load() -- Should always be called last
 end
 

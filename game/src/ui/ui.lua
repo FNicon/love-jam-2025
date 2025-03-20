@@ -15,6 +15,8 @@ ui.node_radius = 15
 ui.background_color = palette.blue[4]
 local highlightedEdge
 
+-- world coordinates are based on the upscaling of the buffer by the pixel_scale
+-- the buffer we draw to
 function ui.getWorldWidth()
   return love.graphics.getWidth() / ui.pixel_scale
 end
@@ -113,7 +115,7 @@ end
 
 function ui.tryStartConnectionDrag( x, y)
   local foundNode = nodeAtLocation(x, y)
-  if foundNode ~= nil then
+  if foundNode ~= nil and foundNode.data.label == "player" then
     ui.startConnectionDrag(foundNode)
   end
 end
@@ -301,7 +303,7 @@ local function drawNodes()
       love.graphics.print(
         node.data.label,
         node.data.x - ui.font:getWidth(node.data.label) / 2,
-        node.data.y - ui.node_radius * 2.5
+        node.data.y + ui.node_radius
       )
     end
   end

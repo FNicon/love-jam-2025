@@ -10,30 +10,34 @@ level.name = "Opposition"
 level.load = function ()
   return {
     nodes = {
-      player = characternode.new{
-        x = ui.getWorldWidth() / 2 - 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.character[1],
-        label = 'player',
-        active = true
+      characters = {
+        player = {
+          x = 3,
+          y = 2,
+          icon = icons.character[1],
+          label = 'player',
+          active = true
+        },
+        enemy = {
+          x = 4,
+          y = 1,
+          icon = icons.enemy[1],
+          label = 'ooze',
+          active = true
+        }
       },
-      enemy1 = characternode.new{
-        x = ui.getWorldWidth() / 2,
-        y = ui.getWorldHeight() / 2 - 60,
-        icon = icons.enemy[1],
-        label = 'enemy',
-        active = true
-      },
-      door = goalnode.new{
-        x = ui.getWorldWidth() / 2 + 60,
-        y = ui.getWorldHeight() / 2,
-        icon = icons.object.door,
-        label = 'find exit',
-        progress = {max = 4, current = 0}
+      goals = {
+        door = {
+          x = 4,
+          y = 2,
+          icon = icons.object.door,
+          label = 'Open door',
+          progressmax = 4
+        }
       }
     },
     connections = {
-      enemy1 = { oppose = {"door"} }
+      enemy = { oppose = {"door"} }
     }
   }
 end
