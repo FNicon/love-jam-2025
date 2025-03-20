@@ -16,7 +16,8 @@ level.load = function ()
           y = 2,
           icon = icons.character[1],
           label = 'player',
-          active = true
+          active = true,
+          maxlength = 200,
         }
       },
       goals = {
@@ -25,7 +26,8 @@ level.load = function ()
           y = 2,
           icon = icons.object.door,
           label = 'Find exit',
-          progressmax = 4
+          progressmax = 4,
+          maxlength = 200,
         }
       }
     },
