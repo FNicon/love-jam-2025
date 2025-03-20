@@ -12,7 +12,7 @@ function grid.new(tile_size)
   end
 
   function gridInstance.worldToGridCoords(self, x, y)
-    return math.floor(x * self.tile_size), math.floor(y / self.tile_size)
+    return math.floor(x / self.tile_size), math.floor(y / self.tile_size)
   end
 
   function gridInstance.areAdjacent(self, worldx1, worldy1, worldx2, worldy2)
