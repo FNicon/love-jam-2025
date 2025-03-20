@@ -41,7 +41,7 @@ level.load = function ()
       },
     },
     connections = {
-      enemy1 = { side = votetype.oppose.label, nodes = {"door"} }
+      enemy = { side = votetype.oppose.label, nodes = {"door"} }
     }
   }
 end

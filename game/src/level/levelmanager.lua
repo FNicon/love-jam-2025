@@ -71,12 +71,9 @@ function levelmanager.load(index)
         local side = levelinfo.connections[name].side
         local targetname = levelinfo.connections[name].nodes
         for _, target in ipairs(targetname) do
-          for checktarget, targetnode in pairs(levelinfo.nodes) do
-            if checktarget == target then
-              local length = distancecalculator.manhattan(node.data.x, node.data.y, targetnode.data.x, targetnode.data.y)
-              node.lambda.pickside(targetnode, side, length)
-            end
-          end
+          local length = distancecalculator.manhattan(node.data.x, node.data.y, nodemap[target].data.x, nodemap[target].data.y)
+          print(length)
+          node.lambda.pickside(nodemap[target], side, length)
         end
       end
     end
