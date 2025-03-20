@@ -1,5 +1,6 @@
 local votemanager = require("src.gameplay.vote.votemanager")
 local graph       = require("src.data.graph")
+local distancecalculator = require("src.data.distance")
 
 local levels = {
   require("src.level.level1"),
@@ -19,6 +20,7 @@ function levelmanager.init(nodes)
 end
 
 function levelmanager.load(index)
+  print("Loading Level " .. index)
   levelmanager.nodes = {}
   if index <= #levels then
     currentlevel = index
@@ -27,14 +29,14 @@ function levelmanager.load(index)
     local levelinfo = level.load()
     for name, node in pairs(levelinfo.nodes) do
       if levelinfo.connections[name] ~= nil then
-        if levelinfo.connections[name]["oppose"] ~= nil then
-          for _, nodename in ipairs(levelinfo.connections[name]["oppose"]) do
-            node.lambda.oppose(levelinfo.nodes[nodename])
-          end
-        end
-        if levelinfo.connections[name]["support"] ~= nil then
-          for _, nodename in ipairs(levelinfo.connections[name]["support"]) do
-            node.lambda.support(levelinfo.nodes[nodename])
+        local side = levelinfo.connections[name].side
+        local targetname = levelinfo.connections[name].nodes
+        for _, target in ipairs(targetname) do
+          for checktarget, targetnode in pairs(levelinfo.nodes) do
+            if checktarget == target then
+              local length = distancecalculator.manhattan(node.data.x, node.data.y, targetnode.data.x, targetnode.data.y)
+              node.lambda.pickside(targetnode, side, length)
+            end
           end
         end
       end
@@ -51,7 +53,7 @@ end
 
 function levelmanager.progressvote()
   if not levelmanager.islevelcompleted() then
-    currentvotemanager:startvote(currentparticipants)
+    currentvotemanager:startvote(currentparticipants, currentgoals)
     currentvotemanager:endvote()
   end
 end
@@ -62,7 +64,6 @@ function levelmanager.islevelcompleted()
   else
     local foundunfinishedgoal = false
     for _, goal in ipairs(currentgoals) do
-      print(goal.data.goal.state)
       if goal.data.goal.state ~= "decided" then
         foundunfinishedgoal = true
         break
@@ -88,7 +89,6 @@ end
 function levelmanager.checklevelprogress()
   if levelmanager.islevelcompleted() then
     print("Level completed!")
-    print(levelmanager.islevelwin())
     if levelmanager.islevelwin() then
       levelmanager.loadnextlevel()
     else

@@ -3,7 +3,6 @@ local character = {}
 function character.new(name)
   local newCharacter = {
     name = name,
-
   }
   return newCharacter
 end

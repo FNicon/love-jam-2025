@@ -2,8 +2,12 @@ local graph = require("src.data.graph")
 local palette = require("assets.palette")
 local icons = require("assets.icons")
 local buffer = require("src.ui.buffer")
+local votetypes = require("src.gameplay.vote.votetype")
+local distancecalculator = require("src.data.distance")
 
 local ui = {}
+local lastdrawnx = 0
+local lastdrawny = 0
 
 --- TODO: make sure this is deterministically run before loading any assets
 love.graphics.setDefaultFilter("nearest", "nearest", 1)
@@ -124,7 +128,16 @@ function ui.updateConnectionDragTarget(x, y)
   if foundNode ~= nil and foundNode ~= ui.connect.start then
     ui.connect.target = foundNode
   else
-    ui.connect.target = {x = x, y = y}
+    local distance = distancecalculator.manhattan(ui.connect.start.data.x, ui.connect.start.data.y, x, y)
+    local newx = x
+    local newy = y
+    if distance > ui.connect.start.data.maxlength then
+      newx = lastdrawnx
+      newy = lastdrawny
+    end
+    ui.connect.target = {x = newx, y = newy}
+    lastdrawnx = newx
+    lastdrawny = newy
   end
 end
 
@@ -187,11 +200,8 @@ function ui.mousereleased(mouseX, mouseY)
     onConnect = function(startNode, targetNode)
       if (startNode.lambda ~= nil) then
         -- support or oppose action check here
-        if (startNode.data.label == "player") then
-          startNode.lambda.support(targetNode)
-        else
-          startNode.lambda.oppose(targetNode)
-        end
+        local length = distancecalculator.manhattan(startNode.data.x, startNode.data.y, targetNode.data.x, targetNode.data.y)
+        startNode.lambda.pickside(targetNode, "support", length)
       end
     end
   }
@@ -255,13 +265,7 @@ local function drawNodes()
         if i <= node.data.progress.current then
           if (node.data.goal.winners ~= nil and node.data.goal.winners[i] ~= nil) then
             local winner = node.data.goal.winners[i]
-            if winner == "support" then
-              love.graphics.setColor(unpack(palette['green'][3]))
-            elseif winner == "oppose" then
-              love.graphics.setColor(unpack(palette['orange'][2]))
-            else
-              love.graphics.setColor(unpack(palette['blue'][3]))
-            end
+            love.graphics.setColor(unpack(votetypes[winner].color))
           end
         else
           love.graphics.setColor(unpack(palette['green'][1]))

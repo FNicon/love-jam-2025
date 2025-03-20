@@ -57,7 +57,7 @@ function graph.node(data)
         print("printing member ", i, node.id)
       end
     end,
-    connect = function(self, neighbor, weight)
+    connect = function(self, neighbor, weight, connectionlabel)
       local used_weight = 1
       if weight ~= nil then
         used_weight = weight
@@ -65,8 +65,10 @@ function graph.node(data)
       table.insert(self.edges, {
         from = self.id,
         to = neighbor.id,
-        weight = used_weight
+        weight = used_weight,
+        label = connectionlabel
       })
+      print("connecting... ", self.data.label, " to ", neighbor.data.label, " with weight ", used_weight, " and label ", connectionlabel)
       table.insert(self.neighbors, neighbor)
     end,
     disconnect = function(self, neighbor)
@@ -100,6 +102,18 @@ function graph.node(data)
         for _, edge in ipairs(self.edges) do
           if edge.to == nodetocheck.id then
             return edge
+          end
+        end
+      end
+    end,
+    updateedge = function(self, nodetocheck, weight, label)
+      if self:isneighbor(nodetocheck) then
+        for index, edge in ipairs(self.edges) do
+          if edge.to == nodetocheck.id then
+            edge.weight = weight
+            edge.label = label
+            self.edges[index] = edge
+            break
           end
         end
       end
