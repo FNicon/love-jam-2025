@@ -1,0 +1,34 @@
+{
+  "name": "Oppostion",
+  "player_location": {
+    "grid_x": 3,
+    "grid_y": 2
+  },
+  "characters": {
+    "enemy": {
+      "grid_x": 4,
+      "grid_y": 1,
+      "icon": "enemy_1",
+      "label": "ooze",
+      "maxlength": 1
+    }
+  },
+  "goals": {
+    "door": {
+      "grid_x": 4,
+      "grid_y": 2,
+      "icon": "door",
+      "label": "find exit",
+      "progress_quota": 4
+    }
+  },
+  "connections": {
+    "enemy": {
+      "side": "oppose",
+      "nodes": [
+        "door"
+      ]
+    }
+  }
+}
+

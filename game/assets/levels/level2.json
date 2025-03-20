@@ -1,0 +1,25 @@
+{
+  "name": "Double Doors",
+  "player_location": {
+    "grid_x": 3,
+    "grid_y": 2
+  },
+  "characters": {},
+  "goals": {
+    "door1": {
+      "grid_x": 4,
+      "grid_y": 1,
+      "icon": "door",
+      "label": "check door",
+      "progress_quota": 4
+    },
+    "door2": {
+      "grid_x": 4,
+      "grid_y": 3,
+      "icon": "door",
+      "label": "check door",
+      "progress_quota": 4
+    }
+  }
+}
+

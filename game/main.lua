@@ -1,24 +1,22 @@
-local ui = require("src.ui.ui")
+-- adds globals from batteries lib, accessible to all files
+-- https://github.com/1bardesign/batteries?tab=readme-ov-file#export-globals
+require("lib.batteries"):export()
+
 local overlayStats = require("lib.overlayStats")
-local graph = require("src.data.graph")
-local palette = require("assets.palette")
-local icons = require("assets.icons")
-local levelmanager = require("src.level.levelmanager")
 
-local root
-local nodes = {}
-
-function love.load()
-  levelmanager.init(nodes)
-  levelmanager.load(1)
-  levelmanager.printlevel()
-  ui.init(levelmanager)
-  print(ui:getWorldWidth(), ui:getWorldHeight())
+local app
+function love.load(args)
+  if args[1] == '--editor' then
+    app = require("editor")
+  else
+    app = require("game")
+  end
+  app.load()
   overlayStats.load() -- Should always be called last
 end
 
 function love.draw()
-  ui.draw()
+  app.draw()
   overlayStats.draw() -- Should always be called last
 end
 
@@ -32,20 +30,22 @@ function love.keypressed(key)
   else
     overlayStats.handleKeyboard(key) -- Should always be called last
   end
+  app.keypressed(key)
 end
 
 function love.mousepressed(x, y, istouch, presses)
-  ui.mousepressed(x, y)
+  app.mousepressed(x, y, istouch, presses)
 end
 
 function love.mousemoved(x, y)
-  ui.mousemoved(x, y)
+  app.mousemoved(x, y)
 end
 
 function love.mousereleased(x, y)
-  ui.mousereleased(x, y)
+  app.mousereleased(x, y)
 end
 
 function love.touchpressed(id, x, y, dx, dy, pressure)
+  app.touchpressed(id, x, y, dx, dy, pressure)
   overlayStats.handleTouch(id, x, y, dx, dy, pressure) -- Should always be called last
 end

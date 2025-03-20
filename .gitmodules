@@ -1,0 +1,9 @@
+[submodule "game/lib/batteries"]
+	path = game/lib/batteries
+	url = https://github.com/1bardesign/batteries.git
+[submodule "arson"]
+	path = game/lib/arson
+	url = https://github.com/flamendless/arson.lua.git
+[submodule "json"]
+	path = game/lib/json
+	url = https://github.com/rxi/json.lua.git
