@@ -17,7 +17,7 @@ level.load = function ()
           icon = icons.character[1],
           label = 'player',
           active = true,
-          maxlength = 200,
+          maxlength = 2,
         }
       },
       goals = {
@@ -27,7 +27,7 @@ level.load = function ()
           icon = icons.object.door,
           label = 'Find exit',
           progressmax = 4,
-          maxlength = 200,
+          maxlength = 2,
         }
       }
     },

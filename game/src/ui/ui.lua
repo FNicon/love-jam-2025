@@ -131,9 +131,8 @@ function ui.updateConnectionDragTarget(x, y)
   if foundNode ~= nil and foundNode ~= ui.connect.start then
     ui.connect.target = foundNode
   else
-    print(ui.connect.start.data.x, ui.connect.start.data.y, x, y)
     local distance = distancecalculator.worldToGridDistance(_levelmanager.grid, ui.connect.start.data.x, ui.connect.start.data.y, x, y)
-    print("check distance ", distance)
+    print("connection distance ", distance, ui.connect.start.data.maxlength )
     local newx = x
     local newy = y
     if distance > ui.connect.start.data.maxlength then
@@ -205,10 +204,8 @@ function ui.mousereleased(mouseX, mouseY)
     onConnect = function(startNode, targetNode)
       if (startNode.lambda ~= nil) then
         -- support or oppose action check here
-        print(startNode.data.x)
-        print(targetNode.data.x)
         local length = distancecalculator.worldToGridDistance(_levelmanager.grid, startNode.data.x, startNode.data.y, targetNode.data.x, targetNode.data.y)
-        print("check distance ", length)
+        print("connection distance ", length)
         startNode.lambda.pickside(targetNode, "support", length)
       end
     end

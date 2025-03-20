@@ -18,7 +18,7 @@ level.load = function ()
           icon = icons.character[1],
           label = 'player',
           active = true,
-          maxlength = 200,
+          maxlength = 2,
         },
         enemy = {
           x = 4,
@@ -26,7 +26,7 @@ level.load = function ()
           icon = icons.enemy[1],
           label = 'ooze',
           active = true,
-          maxlength = 200,
+          maxlength = 2,
         }
       },
       goals = {
@@ -36,7 +36,7 @@ level.load = function ()
           icon = icons.object.door,
           label = 'Open door',
           progressmax = 4,
-          maxlength = 200,
+          maxlength = 2,
         },
       },
     },
