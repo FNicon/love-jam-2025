@@ -16,6 +16,7 @@ local currentlevel = 0
 local currentgoals = {}
 local currentparticipants = {}
 local currentvotemanager = {}
+local turncount = 0
 
 function levelmanager.init(nodes)
   levelmanager.nodes = nodes
@@ -52,6 +53,7 @@ function levelmanager.load(index)
   levelmanager.nodes = {}
   if index <= #levels then
     currentlevel = index
+    turncount = 0
     local level = levels[index]
     levelmanager.currentlevelname = level.name
     local levelinfo = level.load()
@@ -84,9 +86,12 @@ function levelmanager.load(index)
   else
     error("Level not found: " .. index)
   end
+  print("Level loaded successfully")
 end
 
 function levelmanager.progressvote()
+  turncount = turncount + 1
+  print("Start vote turn ", turncount)
   if not levelmanager.islevelcompleted() then
     currentvotemanager:startvote(currentparticipants, currentgoals)
     currentvotemanager:endvote()
@@ -122,8 +127,10 @@ function levelmanager.islevelwin()
 end
 
 function levelmanager.checklevelprogress()
+  local islevelstillinprogress = true
   if levelmanager.islevelcompleted() then
     print("Level completed!")
+    islevelstillinprogress = false
     if levelmanager.islevelwin() then
       levelmanager.loadnextlevel()
     else
@@ -132,6 +139,7 @@ function levelmanager.checklevelprogress()
   else
     print("Level in progress...")
   end
+  return islevelstillinprogress
 end
 
 function levelmanager.restartlevel()

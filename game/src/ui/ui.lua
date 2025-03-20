@@ -81,8 +81,10 @@ ui.buttons = {
     ui.getWorldWidth() - 60,
     ui.getWorldHeight() - 60,
     function ()
-      _levelmanager.checklevelprogress()
-      _levelmanager.progressvote()
+      local levelinprogress = _levelmanager.checklevelprogress()
+      if (levelinprogress) then
+        _levelmanager.progressvote()
+      end
     end
   ),
   Button(
