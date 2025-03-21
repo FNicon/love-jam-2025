@@ -121,7 +121,7 @@ end
 
 function ui.tryStartConnectionDrag( x, y)
   local foundNode = nodeAtLocation(x, y)
-  if foundNode ~= nil and foundNode.data.label == "player" then
+  if foundNode ~= nil and foundNode.data.controllable then
     ui.startConnectionDrag(foundNode)
   end
 end
@@ -204,7 +204,7 @@ function ui.mousereleased(mouseX, mouseY)
         -- support or oppose action check here
         local length = distancecalculator.worldToGridDistance(_levelmanager.grid, startNode.data.x, startNode.data.y, targetNode.data.x, targetNode.data.y)
         print("connection distance ", length)
-        startNode.lambda.pickside(targetNode, "support", length)
+        startNode.lambda.pick_side(targetNode, "support", length)
       end
     end
   }

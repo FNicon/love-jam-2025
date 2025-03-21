@@ -19,12 +19,15 @@ function characternode.new(data)
   newnode.data.active = data.active
   newnode.data.character = newchara
   newnode.data.maxlength = data.maxlength
+  newnode.data.controllable = data.controllable
 
   local lambda = {
-    pickside = function(newgoalnode, side, length)
+    change_side = function(side)
+    end,
+    pick_side = function(newgoalnode, side, length)
       local weight = countweight(length, newnode.data.maxlength)
       if (newnode:isneighbor(newgoalnode)) then
-        newnode:updateedge(newgoalnode, weight, side)
+        newnode:update_edge(newgoalnode, weight, side)
       else
         newnode:connect(newgoalnode, weight, side)
       end
