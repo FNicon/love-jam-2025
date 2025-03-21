@@ -10,6 +10,7 @@ function goalnode.new(data)
   newnode.data.goal = newgoal
   newnode.data.progress = data.progress
   newnode.data.maxlength = data.maxlength
+  newnode.data.on_complete = data.on_complete
   return newnode
 end
 
