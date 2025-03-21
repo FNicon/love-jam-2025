@@ -4,7 +4,8 @@ return {
     enemy_1 = love.graphics.newImage("assets/enemy_portrait_1.png"),
   },
   object = {
-    door = love.graphics.newImage("assets/door.png")
+    door = love.graphics.newImage("assets/door.png"),
+    search = love.graphics.newImage("assets/search.png"),
   },
   ui = {
     advance_button = {

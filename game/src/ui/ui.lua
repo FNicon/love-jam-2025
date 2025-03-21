@@ -127,18 +127,18 @@ function ui.tryStartConnectionDrag( x, y)
 end
 
 function ui.updateConnectionDragTarget(x, y)
-  local foundNode = nodeAtLocation(x, y)
+  local xoff, yoff = x - ui.connect.start.data.x, y - ui.connect.start.data.y
+  local clampedxoff, clampedyoff = distancecalculator.clampWorldToGridDistance(
+    _levelmanager.grid,
+    ui.connect.start.data.maxlength,
+    xoff,
+    yoff
+  )
+  local clampedx, clampedy = ui.connect.start.data.x + clampedxoff, ui.connect.start.data.y + clampedyoff
+  local foundNode = nodeAtLocation(clampedx, clampedy)
   if foundNode ~= nil and foundNode ~= ui.connect.start then
     ui.connect.target = foundNode
   else
-    local xoff, yoff = x - ui.connect.start.data.x, y - ui.connect.start.data.y
-    local clampedxoff, clampedyoff = distancecalculator.clampWorldToGridDistance(
-      _levelmanager.grid,
-      ui.connect.start.data.maxlength,
-      xoff,
-      yoff
-    )
-    local clampedx, clampedy = ui.connect.start.data.x + clampedxoff, ui.connect.start.data.y + clampedyoff
     ui.connect.target = {x = clampedx, y = clampedy}
   end
 end
