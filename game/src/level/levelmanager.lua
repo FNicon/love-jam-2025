@@ -6,6 +6,7 @@ local characternode      = require("src.gameplay.character.characternode")
 local goalnode           = require("src.gameplay.goal.goalnode")
 local levelserializer    = require("src.level.levelserializer")
 local icons              = require("assets.icons")
+local audiomanager       = require("src.audio.audiomanager")
 
 local levelmanager = {}
 local currentgoals = {}
@@ -103,8 +104,13 @@ local function load_nodes(level_info_node_map, loaded_node_map, builder)
   end
 end
 
+function levelmanager.on_load(index)
+  audiomanager.play_sfx("next_level")
+end
+
 function levelmanager.load(index)
   print("Loading Level " .. index)
+  levelmanager.on_load(index)
 
   -- grab level info from table, preferably this is verified to exist
   -- and is validat load time
