@@ -1,6 +1,7 @@
 local ui = require("src.ui.ui")
 local levelmanager = require("src.level.levelmanager")
 local screen = require("src.ui.screens.game")
+local audio_manager = require("src.audio.audiomanager")
 
 local nodes = {}
 
@@ -11,6 +12,7 @@ function app.load()
   levelmanager.init(nodes)
   levelmanager.load(1)
   levelmanager.printlevel()
+  audio_manager.load_bgm("dungeon", true)
   ui.init(screen(ui, levelmanager))
 end
 

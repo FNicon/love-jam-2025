@@ -1,5 +1,6 @@
 local node = require("src.gameplay.nodeobj.node")
 local character = require("src.gameplay.character.character")
+local nodeobj = require("src.gameplay.nodeobj.node")
 
 local characternode = {}
 
@@ -9,6 +10,30 @@ local countweight = function(length, maxlength)
   else
     -- The longer the line, the lower the weight
     return math.floor(maxlength / length)
+  end
+end
+
+local function on_connect(goal)
+  if (goal.data.on_connect ~= nil) then
+    for _, to_connect in ipairs(goal.data.on_connect) do
+      local func_name = to_connect.func
+      local args = to_connect.args
+      args.src = goal
+      local result = nodeobj.connect_functions[func_name](args)
+      -- print(result.data.icon)
+    end
+  end
+end
+
+local function on_vote(goal)
+  if (goal.data.on_vote ~= nil) then
+    for _, to_connect in ipairs(goal.data.on_vote) do
+      local func_name = to_connect.func
+      local args = to_connect.args
+      args.src = goal
+      local result = nodeobj.vote_functions[func_name](args)
+      -- print(result.data.icon)
+    end
   end
 end
 
@@ -31,6 +56,7 @@ function characternode.new(data)
       else
         newnode:connect(newgoalnode, weight, side)
       end
+      on_connect(newgoalnode)
     end,
     abstain = function(newgoalnode)
       newnode:disconnect(newgoalnode)
@@ -43,6 +69,7 @@ function characternode.new(data)
           local current_weight = newnode:getedge(votebox.goal).weight
           -- calculate chance to vote here based on current weight and other factors
           votebox:voteside(votelabel, current_weight)
+          on_vote(votebox.goal)
         end
       end
     end

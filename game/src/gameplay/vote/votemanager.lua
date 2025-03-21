@@ -26,13 +26,15 @@ end
 
 local function on_goal_complete(vm, goal, levelmanager)
   if (goal.data.on_complete ~= nil) then
-    local func_name = goal.data.on_complete.func
-    local args = goal.data.on_complete.args
-    args.levelmanager = levelmanager
-    args.votemanager = vm
-    args.src = goal
-    local result = nodeobj.completetion_functions[func_name](args)
-    -- print(result.data.icon)
+    for _, to_complete in ipairs(goal.data.on_complete) do
+      local func_name = to_complete.func
+      local args = to_complete.args
+      args.levelmanager = levelmanager
+      args.votemanager = vm
+      args.src = goal
+      local result = nodeobj.completetion_functions[func_name](args)
+      -- print(result.data.icon)
+    end
   end
 end
 

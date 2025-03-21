@@ -1,6 +1,14 @@
+used
 
+https://peritune.com/blog/2023/10/13/echoed_art/
 
+https://maou.audio/se_sound01/
 
+https://maou.audio/se_sound_door02/
+
+https://maou.audio/se_sound_heartbeat01/
+
+https://maou.audio/se_sound_footstep01/
 
 Tools
 
