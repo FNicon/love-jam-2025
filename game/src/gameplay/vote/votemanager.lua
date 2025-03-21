@@ -1,5 +1,6 @@
 local votebox = require("src.gameplay.vote.votebox")
 local voteutils = require("src.gameplay.vote.voteutils")
+local node_converter = require("src.gameplay.nodeconverter.nodeconverter")
 
 local votemanager = {}
 
@@ -21,6 +22,15 @@ function votemanager.retrieveallparticipants(nodes)
         end
     end
     return newparticipants
+end
+
+local function on_goal_complete(goal)
+  if (goal.data.on_complete ~= nil) then
+    local func_name = goal.data.on_complete.func
+    local args = goal.data.on_complete.args
+    local result = node_converter[func_name](args, goal)
+    print(result.data.icon)
+  end
 end
 
 local function handlewinner(votebox)
@@ -58,6 +68,7 @@ local function handlewinner(votebox)
     if #winners == 1 then
       votebox.goal.data.goal.winner = winners[1]
       votebox.goal.data.goal.state = "decided"
+      on_goal_complete(votebox.goal)
     else
       local useddraw = ""
       local drawstorages = voteutils.initdrawstorages()

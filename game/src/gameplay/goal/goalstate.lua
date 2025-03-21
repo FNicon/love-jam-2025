@@ -1,8 +1,6 @@
-local goalstate = {
-  "pending",
-  "decided",
-  "completed",
-  "failed",
+return {
+  pending = "pending",
+  decided = "decided",
+  completed = "completed",
+  failed = "failed",
 }
-
-return goalstate

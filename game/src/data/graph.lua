@@ -106,7 +106,19 @@ function graph.node(data)
         end
       end
     end,
-    updateedge = function(self, nodetocheck, weight, label)
+    update_edge_label = function(self, nodetocheck, label)
+      if self:isneighbor(nodetocheck) then
+        for index, edge in ipairs(self.edges) do
+          if edge.to == nodetocheck.id then
+            edge.label = label
+            edge.weight = edge.weight
+            self.edges[index] = edge
+            break
+          end
+        end
+      end
+    end,
+    update_edge = function(self, nodetocheck, weight, label)
       if self:isneighbor(nodetocheck) then
         for index, edge in ipairs(self.edges) do
           if edge.to == nodetocheck.id then

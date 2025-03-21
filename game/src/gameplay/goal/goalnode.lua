@@ -1,5 +1,6 @@
 local node = require("src.gameplay.nodeobj.node")
 local goal = require("src.gameplay.goal.goal")
+
 local goalnode = {}
 
 -- data : x, y, label, icon, progress
@@ -11,6 +12,10 @@ function goalnode.new(data)
   newnode.data.progress = data.progress
   newnode.data.maxlength = data.maxlength
   newnode.data.on_complete = data.on_complete
+
+  local lambda = {
+  }
+  newnode.data.lambda = lambda
   return newnode
 end
 
