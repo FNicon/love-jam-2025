@@ -233,10 +233,16 @@ local function drawConnectionLineFromNodeToNode(from, to)
     ((from == highlightedEdge.n1 and to == highlightedEdge.n2) or
       (from == highlightedEdge.n2 and to == highlightedEdge.n1))
   then
+    local edgelabel = (from:getedge(to).label)
     -- is highlightedEdge
-    love.graphics.setColor(unpack(palette['orange'][2]))
+    love.graphics.setColor(unpack(votetypes[edgelabel].highlight))
   else
-    love.graphics.setColor(unpack(palette['orange'][3]))
+    local edge = (from:getedge(to))
+    if (edge ~= nil) then
+      love.graphics.setColor(unpack(votetypes[edge.label].highlight))
+    else
+      love.graphics.setColor(unpack(palette['orange'][3]))
+    end
   end
   love.graphics.line(start_x, start_y, end_x, end_y)
 end
