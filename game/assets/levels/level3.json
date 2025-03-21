@@ -19,7 +19,13 @@
       "grid_y": 2,
       "icon": "door",
       "label": "find exit",
-      "progress_quota": 4
+      "progress_quota": 4,
+      "on_complete": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "door"
+        }
+      }]
     }
   },
   "connections": {

@@ -1,0 +1,11 @@
+return {
+  bgm = {
+    dungeon = love.audio.newSource("assets/audio/bgm/dungeon.mp3", "stream"),
+
+  },
+  sfx = {
+    door = love.audio.newSource("assets/audio/sfx/door.wav", "static"),
+    progress = love.audio.newSource("assets/audio/sfx/progress.wav", "static"),
+    connect = love.audio.newSource("assets/audio/sfx/connect.wav", "static"),
+  }
+}

@@ -1,5 +1,6 @@
 local graph = require("src.data.graph")
 local nodeconverter = require("src.gameplay.nodeobj.nodeconverter.nodeconverter")
+local sfxplayer = require("src.audio.sfxplayer")
 
 local node = {}
 
@@ -14,7 +15,8 @@ function node.new(x, y, icon, label)
 end
 
 node.completetion_functions = {
-  convert_to = nodeconverter
+  convert_to = nodeconverter,
+  play_sfx = sfxplayer
 }
 
 return node
