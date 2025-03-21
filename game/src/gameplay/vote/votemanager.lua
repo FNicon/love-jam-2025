@@ -24,12 +24,13 @@ function votemanager.retrieveallparticipants(nodes)
     return newparticipants
 end
 
-local function on_goal_complete(goal, levelmanager)
+local function on_goal_complete(vm, goal, levelmanager)
   if (goal.data.on_complete ~= nil) then
     for _, to_complete in ipairs(goal.data.on_complete) do
       local func_name = to_complete.func
       local args = to_complete.args
       args.levelmanager = levelmanager
+      args.votemanager = vm
       args.src = goal
       local result = nodeobj.completetion_functions[func_name](args)
       -- print(result.data.icon)
@@ -37,7 +38,7 @@ local function on_goal_complete(goal, levelmanager)
   end
 end
 
-local function handlewinner(votebox, levelmanager)
+local function handlewinner(vm, votebox, levelmanager)
   local result = votebox:decideresult()
   if not votebox:isdraw() then
     if (votebox.goal.data.progress.max > votebox.goal.data.progress.current) then
@@ -72,7 +73,7 @@ local function handlewinner(votebox, levelmanager)
     if #winners == 1 then
       votebox.goal.data.goal.winner = winners[1]
       votebox.goal.data.goal.state = "decided"
-      on_goal_complete(votebox.goal, levelmanager)
+      on_goal_complete(vm, votebox.goal, levelmanager)
     else
       local useddraw = ""
       local drawstorages = voteutils.initdrawstorages()
@@ -93,14 +94,14 @@ function votemanager.new(levelmanager)
         decideresult = function(self, goal)
             for _, vb in ipairs(self.voteboxes) do
               if vb.goal == goal then
-                  handlewinner(vbs, self.levelmanager)
+                  handlewinner(self, vb, self.levelmanager)
                   break
               end
             end
         end,
         decideallresult = function(self)
             for _, vb in ipairs(self.voteboxes) do
-              handlewinner(vb, self.levelmanager)
+              handlewinner(self, vb, self.levelmanager)
             end
         end,
         addvotebox = function(self, goal)
@@ -114,9 +115,9 @@ function votemanager.new(levelmanager)
                 self:addvotebox(goal)
             end
         end,
-        startvote = function(self, participants, goals)
+        startvote = function(self)
           for _, vb in ipairs(self.voteboxes) do
-              for _, participant in ipairs(participants) do
+              for _, participant in ipairs(votemanager.retrieveallparticipants(self.levelmanager.nodes)) do
                 if participant ~= nil then
                   local edge = participant:getedge(vb.goal)
                   if edge ~= nil then

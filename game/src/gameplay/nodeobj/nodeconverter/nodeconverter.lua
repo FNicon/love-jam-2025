@@ -25,6 +25,14 @@ return function(args)
     end
     table.remove(args.levelmanager.nodes, index)
     table.insert(args.levelmanager.nodes, new_relay_node)
+    if args.src.data.type == "goal" then
+      for i, vb in ipairs(args.votemanager.voteboxes) do
+        if vb.goal == args.src then
+          table.remove(args.votemanager.voteboxes, i)
+          break
+        end
+      end
+    end
 
     print("Controllable?",new_relay_node.data.controllable)
     return true
