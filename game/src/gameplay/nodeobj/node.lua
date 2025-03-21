@@ -23,4 +23,8 @@ node.connect_functions = {
   play_sfx = sfxplayer
 }
 
+node.vote_functions = {
+  play_sfx = sfxplayer
+}
+
 return node

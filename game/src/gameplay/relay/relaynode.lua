@@ -26,6 +26,18 @@ local function on_connect(goal)
   end
 end
 
+local function on_vote(goal)
+  if (goal.data.on_vote ~= nil) then
+    for _, to_connect in ipairs(goal.data.on_vote) do
+      local func_name = to_connect.func
+      local args = to_connect.args
+      args.src = goal
+      local result = nodeobj.vote_functions[func_name](args)
+      -- print(result.data.icon)
+    end
+  end
+end
+
 function relaynode.new(data)
   local newchara = relay.new(data.label)
   local newnode = node.new(data.x, data.y, data.icon, data.label)
@@ -55,6 +67,7 @@ function relaynode.new(data)
           local current_weight = newnode:getedge(votebox.goal).weight
           -- calculate chance to vote here based on current weight and other factors
           votebox:voteside(votelabel, current_weight)
+          on_vote(votebox.goal)
         end
       end
     end

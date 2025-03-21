@@ -31,6 +31,12 @@
         "args": {
           "sound": "connect"
         }
+      }],
+      "on_vote": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "progress"
+        }
       }]
     }
   },

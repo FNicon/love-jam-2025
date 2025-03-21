@@ -8,6 +8,8 @@ https://maou.audio/se_sound_door02/
 
 https://maou.audio/se_sound_heartbeat01/
 
+https://maou.audio/se_sound_footstep01/
+
 Tools
 
 https://github.com/SiENcE/astray - Astray is a lua based maze, room and dungeon generation library for dungeon crawlers and roguelike video games.

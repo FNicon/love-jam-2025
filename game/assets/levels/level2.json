@@ -34,16 +34,31 @@
           "sound": "connect"
         }
       }],
-      "on_vote" : {
-
-      }
+      "on_vote": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "progress"
+        }
+      }]
     },
     "door2": {
       "grid_x": 5,
       "grid_y": 1,
       "icon": "door",
       "label": "exit",
-      "progress_quota": 4
+      "progress_quota": 4,
+      "on_connect": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "connect"
+        }
+      }],
+      "on_vote": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "progress"
+        }
+      }]
     }
   }
 }
