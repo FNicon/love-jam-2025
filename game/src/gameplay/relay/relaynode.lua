@@ -21,10 +21,10 @@ function relaynode.new(data)
   newnode.data.maxlength = data.maxlength
 
   local lambda = {
-    pickside = function(newgoalnode, side, length)
+    pick_side = function(newgoalnode, side, length)
       local weight = countweight(length, newnode.data.maxlength)
       if (newnode:isneighbor(newgoalnode)) then
-        newnode:updateedge(newgoalnode, weight, side)
+        newnode:update_edge(newgoalnode, weight, side)
       else
         newnode:connect(newgoalnode, weight, side)
       end

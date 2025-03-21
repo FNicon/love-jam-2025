@@ -50,7 +50,8 @@ local function create_player_node(info)
     icon = icons.characters.player,
     label = "player",
     active = true,
-    maxlength = 1
+    maxlength = 1,
+    controllable = true
   }
 end
 
@@ -73,6 +74,7 @@ local function create_goal_node(info)
     label = info.label,
     progress = {max = info.progress_quota, current = 0},
     maxlength = info.maxlength,
+    on_complete = info.on_complete
   }
 end
 
@@ -130,19 +132,25 @@ function levelmanager.load(index)
         for _, target in ipairs(targetname) do
           local length = distancecalculator.worldToGridDistance(levelmanager.grid, node.data.x, node.data.y, loaded_node_map[target].data.x, loaded_node_map[target].data.y)
           print("connection distance ", length)
-          node.lambda.pickside(loaded_node_map[target], side, length)
+          node.lambda.pick_side(loaded_node_map[target], side, length)
         end
       end
     end
   end
 
   -- setup votemanager
-  currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
-  currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
-  currentvotemanager = votemanager.new()
-  currentvotemanager:addvoteboxlist(currentgoals)
+  levelmanager.setupvotemanager(false)
 
   print("Level loaded successfully")
+end
+
+function levelmanager.setupvotemanager(is_re_setup)
+  currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
+  currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
+  if not (is_re_setup) then
+    currentvotemanager = votemanager.new()
+  end
+  currentvotemanager:addvoteboxlist(currentgoals)
 end
 
 function levelmanager.progressvote()
