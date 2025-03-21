@@ -148,7 +148,7 @@ function levelmanager.setupvotemanager(is_re_setup)
   currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
   currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
   if not (is_re_setup) then
-    currentvotemanager = votemanager.new()
+    currentvotemanager = votemanager.new(levelmanager)
   end
   currentvotemanager:addvoteboxlist(currentgoals)
 end

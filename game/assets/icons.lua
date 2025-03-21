@@ -2,6 +2,7 @@ return {
   characters = {
     player = love.graphics.newImage("assets/character_portrait_1.png"),
     enemy_1 = love.graphics.newImage("assets/enemy_portrait_1.png"),
+    path = love.graphics.newImage("assets/path.png"),
   },
   object = {
     door = love.graphics.newImage("assets/door.png"),

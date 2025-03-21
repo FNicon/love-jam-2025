@@ -1,6 +1,6 @@
 local votebox = require("src.gameplay.vote.votebox")
 local voteutils = require("src.gameplay.vote.voteutils")
-local node_converter = require("src.gameplay.nodeconverter.nodeconverter")
+local nodeobj = require("src.gameplay.nodeobj.node")
 
 local votemanager = {}
 
@@ -24,16 +24,18 @@ function votemanager.retrieveallparticipants(nodes)
     return newparticipants
 end
 
-local function on_goal_complete(goal)
+local function on_goal_complete(goal, levelmanager)
   if (goal.data.on_complete ~= nil) then
     local func_name = goal.data.on_complete.func
     local args = goal.data.on_complete.args
-    local result = node_converter[func_name](args, goal)
-    print(result.data.icon)
+    args.levelmanager = levelmanager
+    args.src = goal
+    local result = nodeobj.completetion_functions[func_name](args)
+    -- print(result.data.icon)
   end
 end
 
-local function handlewinner(votebox)
+local function handlewinner(votebox, levelmanager)
   local result = votebox:decideresult()
   if not votebox:isdraw() then
     if (votebox.goal.data.progress.max > votebox.goal.data.progress.current) then
@@ -68,7 +70,7 @@ local function handlewinner(votebox)
     if #winners == 1 then
       votebox.goal.data.goal.winner = winners[1]
       votebox.goal.data.goal.state = "decided"
-      on_goal_complete(votebox.goal)
+      on_goal_complete(votebox.goal, levelmanager)
     else
       local useddraw = ""
       local drawstorages = voteutils.initdrawstorages()
@@ -81,21 +83,22 @@ local function handlewinner(votebox)
   end
 end
 
-function votemanager.new()
+function votemanager.new(levelmanager)
     local newVotemanager = {
         -- goals = {},
         voteboxes = {},
+        levelmanager = levelmanager,
         decideresult = function(self, goal)
             for _, vb in ipairs(self.voteboxes) do
               if vb.goal == goal then
-                  handlewinner(vb)
+                  handlewinner(vbs, self.levelmanager)
                   break
               end
             end
         end,
         decideallresult = function(self)
             for _, vb in ipairs(self.voteboxes) do
-              handlewinner(vb)
+              handlewinner(vb, self.levelmanager)
             end
         end,
         addvotebox = function(self, goal)

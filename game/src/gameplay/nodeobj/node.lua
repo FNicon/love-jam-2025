@@ -1,4 +1,5 @@
 local graph = require("src.data.graph")
+local nodeconverter = require("src.gameplay.nodeobj.nodeconverter.nodeconverter")
 
 local node = {}
 
@@ -11,5 +12,9 @@ function node.new(x, y, icon, label)
   }
   return newnode
 end
+
+node.completetion_functions = {
+  convert_to = nodeconverter
+}
 
 return node

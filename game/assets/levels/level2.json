@@ -14,10 +14,14 @@
       "progress_quota": 1,
       "on_complete": {
         "func": "convert_to",
-        "args": ["relay", {
-          "label": "path",
-          "icon": "path"
-        }]
+        "args": {
+          "to": {
+            "type": "relay",
+            "label": "path",
+            "icon": "path",
+            "maxlength": 1
+          }
+        }
       }
     },
     "door2": {
