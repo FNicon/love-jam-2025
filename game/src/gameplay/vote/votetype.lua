@@ -3,8 +3,8 @@ local palette = require("assets.palette")
 local votetypes = {
   support = {
     label = "support",
-    color = palette['green'][3],
-    highlight = palette['green'][2],
+    color = palette['green'][2],
+    highlight = palette['green'][1],
     progress = true,
   },
   oppose = {

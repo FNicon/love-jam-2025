@@ -35,8 +35,8 @@ local function load_level_files()
   end
 end
 
-function levelmanager.init(nodes)
-  levelmanager.nodes = nodes
+function levelmanager.init()
+  levelmanager.nodes = {}
   levelmanager.currentlevelname = "No Level Loaded"
   levelmanager.grid = grid.new(60)
   load_level_files()

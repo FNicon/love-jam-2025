@@ -1,5 +1,6 @@
 local ui = require("src.ui.ui")
 local levelmanager = require("src.level.levelmanager")
+local screen = require("src.ui.screens.game")
 
 local nodes = {}
 
@@ -10,7 +11,7 @@ function app.load()
   levelmanager.init(nodes)
   levelmanager.load(1)
   levelmanager.printlevel()
-  ui.init(levelmanager)
+  ui.init(screen(ui, levelmanager))
 end
 
 function app.draw()
@@ -18,9 +19,11 @@ function app.draw()
 end
 
 function app.update(dt)
+  ui.update(dt)
 end
 
 function app.keypressed(key)
+  ui.keypressed(key)
 end
 
 function app.mousepressed(x, y, istouch, presses)
