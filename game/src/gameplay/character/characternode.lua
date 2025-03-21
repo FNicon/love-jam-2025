@@ -1,5 +1,6 @@
 local node = require("src.gameplay.nodeobj.node")
 local character = require("src.gameplay.character.character")
+local nodeobj = require("src.gameplay.nodeobj.node")
 
 local characternode = {}
 
@@ -9,6 +10,19 @@ local countweight = function(length, maxlength)
   else
     -- The longer the line, the lower the weight
     return math.floor(maxlength / length)
+  end
+end
+
+local function on_connect(goal)
+  print(goal.data.on_connect)
+  if (goal.data.on_connect ~= nil) then
+    for _, to_connect in ipairs(goal.data.on_connect) do
+      local func_name = to_connect.func
+      local args = to_connect.args
+      args.src = goal
+      local result = nodeobj.connect_functions[func_name](args)
+      -- print(result.data.icon)
+    end
   end
 end
 
@@ -31,6 +45,7 @@ function characternode.new(data)
       else
         newnode:connect(newgoalnode, weight, side)
       end
+      on_connect(newgoalnode)
     end,
     abstain = function(newgoalnode)
       newnode:disconnect(newgoalnode)

@@ -28,12 +28,12 @@
           "sound": "door"
         }
       }],
-      "on_connect" : {
+      "on_connect": [{
         "func": "play_sfx",
         "args": {
           "sound": "connect"
         }
-      },
+      }],
       "on_vote" : {
 
       }

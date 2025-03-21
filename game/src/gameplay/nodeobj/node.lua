@@ -19,4 +19,8 @@ node.completetion_functions = {
   play_sfx = sfxplayer
 }
 
+node.connect_functions = {
+  play_sfx = sfxplayer
+}
+
 return node

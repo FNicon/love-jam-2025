@@ -17,6 +17,12 @@
         "args": {
           "sound": "door"
         }
+      }],
+      "on_connect": [{
+        "func": "play_sfx",
+        "args": {
+          "sound": "connect"
+        }
       }]
     }
   }

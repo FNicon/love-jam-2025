@@ -74,7 +74,9 @@ local function create_goal_node(info)
     label = info.label,
     progress = {max = info.progress_quota, current = 0},
     maxlength = info.maxlength,
-    on_complete = info.on_complete
+    on_complete = info.on_complete,
+    on_connect = info.on_connect,
+    on_vote = info.on_vote
   }
 end
 

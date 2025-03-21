@@ -12,6 +12,8 @@ function goalnode.new(data)
   newnode.data.progress = data.progress
   newnode.data.maxlength = data.maxlength
   newnode.data.on_complete = data.on_complete
+  newnode.data.on_connect = data.on_connect
+  newnode.data.on_vote = data.on_vote
 
   local lambda = {
   }

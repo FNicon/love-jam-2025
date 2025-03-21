@@ -1,5 +1,6 @@
 local node = require("src.gameplay.nodeobj.node")
 local relay = require("src.gameplay.relay.relay")
+local nodeobj = require("src.gameplay.nodeobj.node")
 
 local relaynode = {}
 
@@ -9,6 +10,19 @@ local countweight = function(length, maxlength)
   else
     -- The longer the line, the lower the weight
     return math.floor(maxlength / length)
+  end
+end
+
+local function on_connect(goal)
+  print(goal.data.on_connect)
+  if (goal.data.on_connect ~= nil) then
+    for _, to_connect in ipairs(goal.data.on_connect) do
+      local func_name = to_connect.func
+      local args = to_connect.args
+      args.src = goal
+      local result = nodeobj.connect_functions[func_name](args)
+      -- print(result.data.icon)
+    end
   end
 end
 
@@ -27,6 +41,7 @@ function relaynode.new(data)
         newnode:update_edge(newgoalnode, weight, side)
       else
         newnode:connect(newgoalnode, weight, side)
+        on_connect(newgoalnode)
       end
     end,
     abstain = function(newgoalnode)
