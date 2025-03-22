@@ -200,7 +200,7 @@ function levelmanager.restartlevel()
 end
 
 function levelmanager.all_levels_completed()
-  return levelmanager.currentlevel >= #levels and levelmanager.islevelcompleted()
+  return levelmanager.currentlevel >= #levels and levelmanager.get_level_status() == level_states.success
 end
 
 function levelmanager.loadnextlevel()

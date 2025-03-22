@@ -13,6 +13,7 @@ local progressable = {
     c.votebox = votebox.new()
     c.quota = params.quota
     c.votes = voteutils.initvotetypestorages()
+    c.on_connect = params.on_connect
     c.on_progress = params.on_progress
     c.on_complete = params.on_complete
     c.required = params.required or false

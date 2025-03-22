@@ -1,6 +1,8 @@
 local node_data = require("src.gameplay.nodedata.base")
 local components = require("src.gameplay.nodedata.components")
 local icons      = require("assets.icons")
+local sfxplayer  = require("src.audio.sfxplayer")
+local audiomanager = require("src.audio.audiomanager")
 
 local type_name = "door"
 
@@ -11,9 +13,14 @@ return function (owner, params)
     {
       quota = params.quota,
       required = params.required,
-      on_progress = function ()
+      on_connect = function (self)
+        audiomanager.play_sfx("connect")
       end,
-      on_complete = function ()
+      on_progress = function (self)
+        audiomanager.play_sfx("progress")
+      end,
+      on_complete = function (self)
+        audiomanager.play_sfx("door")
       end
     }
   )

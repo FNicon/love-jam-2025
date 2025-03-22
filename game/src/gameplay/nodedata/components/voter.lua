@@ -1,5 +1,6 @@
 local component = require("src.gameplay.nodedata.components.base")
 local connect_response = require("src.gameplay.nodedata.components.connectresponse")
+local progressable     = require("src.gameplay.nodedata.components.progressable")
 
 local name = "voter"
 
@@ -28,6 +29,10 @@ local voter = {
         node:update_edge(end_node, weight, self.vote_side)
       else
         node:connect(end_node, weight, self.vote_side)
+        local progress = end_node.data:getComponent(progressable)
+        if progress ~= nil then
+          progress:on_connect()
+        end
       end
       local cr = node_data:getComponent(connect_response)
       if cr ~= nil then
