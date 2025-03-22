@@ -1,35 +1,16 @@
 {
   "name": "The First Door",
   "player_location": {
-    "grid_x": 3,
-    "grid_y": 2
+    "x": 3,
+    "y": 2
   },
-  "characters": {},
-  "goals": {
+  "nodes": {
     "door": {
-      "grid_x": 4,
-      "grid_y": 2,
-      "icon": "door",
-      "label": "exit",
-      "progress_quota": 1,
-      "on_complete": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "door"
-        }
-      }],
-      "on_connect": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "connect"
-        }
-      }],
-      "on_vote": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "progress"
-        }
-      }]
+      "type": "door",
+      "quota": 1,
+      "x": 4,
+      "y": 2,
+      "required": true
     }
   }
 }
