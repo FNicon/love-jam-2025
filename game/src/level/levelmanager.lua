@@ -146,7 +146,7 @@ function levelmanager.load(index)
   -- load nodes
   load_nodes(levelinfo.characters, loaded_node_map, create_character_node)
   load_nodes(levelinfo.goals, loaded_node_map, create_goal_node)
-  load_nodes(levelinfo.heart, loaded_node_map, create_heart_node)
+  -- load_nodes(levelinfo.heart, loaded_node_map, create_heart_node)
 
   -- create exiting connections
   if levelinfo.connections ~= nil then
@@ -172,7 +172,7 @@ end
 
 function levelmanager.setupvotemanager(is_re_setup)
   currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
-  currenthearts = votemanager.retrieveallhearts(levelmanager.nodes)
+  -- currenthearts = votemanager.retrieveallhearts(levelmanager.nodes)
   currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
   if not (is_re_setup) then
     currentvotemanager = votemanager.new(levelmanager)
