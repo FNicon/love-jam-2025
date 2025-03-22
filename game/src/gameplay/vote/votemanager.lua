@@ -14,10 +14,20 @@ function votemanager.retrieveallgoals(nodes)
     return newgoals
 end
 
+function votemanager.retrieveallhearts(nodes)
+  local newhearts = {}
+  for _, node in ipairs(nodes) do
+      if node.data.type == "heart" then
+          table.insert(newhearts, node)
+      end
+  end
+  return newhearts
+end
+
 function votemanager.retrieveallparticipants(nodes)
   local newparticipants = {}
    for _, node in ipairs(nodes) do
-        if node.data.type ~= "goal" then
+        if node.data.type ~= "goal" or node.data.type ~= "heart" then
             table.insert(newparticipants, node)
         end
     end

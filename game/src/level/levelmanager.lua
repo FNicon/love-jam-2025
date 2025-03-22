@@ -7,9 +7,11 @@ local goalnode           = require("src.gameplay.goal.goalnode")
 local levelserializer    = require("src.level.levelserializer")
 local icons              = require("assets.icons")
 local audiomanager       = require("src.audio.audiomanager")
+local heartnode          = require("src.gameplay.heart.heartnode")
 
 local levelmanager = {}
 local currentgoals = {}
+local currenthearts = {}
 local currentparticipants = {}
 local currentvotemanager = {}
 local turncount = 0
@@ -81,6 +83,21 @@ local function create_goal_node(info)
   }
 end
 
+local function create_heart_node(info)
+  return heartnode.new{
+    x = info.x,
+    y = info.y,
+    icon = icons.object[info.icon],
+    label = info.label,
+    progress = {max = info.progress_quota, current = 0},
+    maxlength = info.maxlength,
+    on_complete = info.on_complete,
+    on_connect = info.on_connect,
+    on_vote = info.on_vote,
+    char_owner = info.char_owner
+  }
+end
+
 local function init_levelmanager_info(index, name)
   levelmanager.nodes = {}
   levelmanager.currentlevel = index
@@ -129,6 +146,7 @@ function levelmanager.load(index)
   -- load nodes
   load_nodes(levelinfo.characters, loaded_node_map, create_character_node)
   load_nodes(levelinfo.goals, loaded_node_map, create_goal_node)
+  -- load_nodes(levelinfo.heart, loaded_node_map, create_heart_node)
 
   -- create exiting connections
   if levelinfo.connections ~= nil then
@@ -154,6 +172,7 @@ end
 
 function levelmanager.setupvotemanager(is_re_setup)
   currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
+  -- currenthearts = votemanager.retrieveallhearts(levelmanager.nodes)
   currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
   if not (is_re_setup) then
     currentvotemanager = votemanager.new(levelmanager)

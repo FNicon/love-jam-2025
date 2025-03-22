@@ -7,6 +7,7 @@ return {
   path = love.graphics.newImage("assets/path.png"),
   door = love.graphics.newImage("assets/door.png"),
   search = love.graphics.newImage("assets/search.png"),
+  heart = love.graphics.newImage("assets/heart.png"),
   advance_button = {
     up = love.graphics.newImage("assets/advance_button_up.png"),
     down = love.graphics.newImage("assets/advance_button_down.png")
