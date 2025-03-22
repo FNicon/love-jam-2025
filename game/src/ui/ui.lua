@@ -1,10 +1,5 @@
-local graph = require("src.data.graph")
 local palette = require("assets.palette")
-local icons = require("assets.icons")
 local buffer = require("src.ui.buffer")
-local votetypes = require("src.gameplay.vote.votetype")
-local distancecalculator = require("src.data.distance")
-local widgets = require("src.ui.widgets")
 
 local ui = {}
 
@@ -16,7 +11,6 @@ ui.font = require("assets.font")
 ui.pixel_scale = 4
 ui.node_radius = 15
 ui.background_color = palette.blue[4]
-local highlightedEdge
 
 -- world coordinates are based on the upscaling of the buffer by the pixel_scale
 -- the buffer we draw to
@@ -43,6 +37,10 @@ end
 
 function ui.init(screen)
   buffer:init(ui.getWorldWidth(), ui.getWorldHeight(), ui.pixel_scale)
+  ui.screen = screen
+end
+
+function ui.change_screen(screen)
   ui.screen = screen
 end
 

@@ -48,7 +48,7 @@ local function create_player_node(info)
   return characternode.new{
     x = worldx,
     y = worldy,
-    icon = icons.characters.player,
+    icon = icons.player,
     label = "player",
     active = true,
     maxlength = 1,
@@ -60,7 +60,7 @@ local function create_character_node(info)
   return characternode.new{
     x = info.x,
     y = info.y,
-    icon = icons.characters[info.icon],
+    icon = icons[info.icon],
     label = info.label,
     active = info.active,
     maxlength = info.maxlength,
@@ -71,7 +71,7 @@ local function create_goal_node(info)
   return goalnode.new{
     x = info.x,
     y = info.y,
-    icon = icons.object[info.icon],
+    icon = icons[info.icon],
     label = info.label,
     progress = {max = info.progress_quota, current = 0},
     maxlength = info.maxlength,
@@ -223,11 +223,13 @@ function levelmanager.restartlevel()
   end
 end
 
+function levelmanager.all_levels_completed()
+  return levelmanager.currentlevel > #levels
+end
+
 function levelmanager.loadnextlevel()
-  if levelmanager.islevelcompleted() then
+  if levelmanager.islevelcompleted() and not levelmanager.all_levels_completed() then
     levelmanager.load(levelmanager.currentlevel + 1)
-  else
-    print("All levels completed!")
   end
 end
 

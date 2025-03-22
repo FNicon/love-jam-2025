@@ -1,13 +1,13 @@
 {
   "name": "The First Door",
   "player_location": {
-    "grid_x": 4,
+    "grid_x": 3,
     "grid_y": 2
   },
   "characters": {},
   "goals": {
     "door": {
-      "grid_x": 5,
+      "grid_x": 4,
       "grid_y": 2,
       "icon": "door",
       "label": "exit",

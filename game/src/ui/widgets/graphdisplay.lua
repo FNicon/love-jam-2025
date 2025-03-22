@@ -209,7 +209,7 @@ return function(
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.print(
           node.data.label,
-          node.data.x - ui.font:getWidth(node.data.label) / 2,
+          node.data.x - ui.font.default:getWidth(node.data.label) / 2,
           node.data.y + self.node_radius
         )
       end
