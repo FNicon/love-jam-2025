@@ -7,6 +7,7 @@ return {
   object = {
     door = love.graphics.newImage("assets/door.png"),
     search = love.graphics.newImage("assets/search.png"),
+    heart = love.graphics.newImage("assets/heart.png")
   },
   ui = {
     advance_button = {
