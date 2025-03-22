@@ -21,6 +21,7 @@ function love.draw()
 end
 
 function love.update(dt)
+  app.update(dt)
   overlayStats.update(dt) -- Should always be called last
 end
 

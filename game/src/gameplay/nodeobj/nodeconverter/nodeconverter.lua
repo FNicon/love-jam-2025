@@ -9,7 +9,7 @@ return function(args)
     local new_relay_node = relaynode.new{
       x = args.src.data.x,
       y = args.src.data.y,
-      icon = icons.characters[args.to.icon],
+      icon = icons[args.to.icon],
       label = args.to.label,
       active = true,
       maxlength = args.to.maxlength

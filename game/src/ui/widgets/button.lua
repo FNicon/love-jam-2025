@@ -1,4 +1,4 @@
-return function (label, icon_up, icon_down, x, y, onClick)
+return function (label, icon_up, icon_down, x, y, onClick, clickable_label)
   return {
     pressed = false,
     x = x,
@@ -7,9 +7,14 @@ return function (label, icon_up, icon_down, x, y, onClick)
     icon_up = icon_up,
     icon_down = icon_down,
     onClick = onClick,
+    clickable_label = clickable_label,
     isUnder = function (self, x, y)
+      local label_offset = 0
+      if clickable_label then
+        label_offset = math.ceil(icon_up:getHeight() * .8)
+      end
       return math.abs(x - self.x) < math.floor(self.icon_up:getWidth()/2)
-        and math.abs(y - self.y) < math.floor(self.icon_up:getHeight()/2)
+        and math.abs(y - self.y) < math.floor(self.icon_up:getHeight()/2 + label_offset)
     end,
     draw = function (self, ui)
       local icon
@@ -18,6 +23,7 @@ return function (label, icon_up, icon_down, x, y, onClick)
       else
         icon = self.icon_up
       end
+      love.graphics.setFont(ui.font.default)
       love.graphics.draw(
         icon,
         self.x - math.floor(icon:getWidth() / 2),
@@ -25,7 +31,7 @@ return function (label, icon_up, icon_down, x, y, onClick)
       )
       love.graphics.print(
         self.label,
-        self.x - math.floor(ui.font:getWidth(self.label)/2),
+        self.x - math.floor(ui.font.default:getWidth(self.label)/2),
         self.y + math.ceil(icon:getHeight() * .8)
       )
     end,

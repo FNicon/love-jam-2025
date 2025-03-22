@@ -11,14 +11,13 @@ return function (ui, levelmanager)
       ),
       widgets.levelinfo(
         levelmanager,
-        ui.font,
         ui.getWorldWidth() / 2,
-       10
+        10
       ),
       widgets.button(
         'advance',
-        icons.ui.advance_button.up,
-        icons.ui.advance_button.down,
+        icons.advance_button.up,
+        icons.advance_button.down,
         ui.getWorldWidth() - 60,
         ui.getWorldHeight() - 60,
         function ()
@@ -30,8 +29,8 @@ return function (ui, levelmanager)
       ),
       widgets.button(
         'reset',
-        icons.ui.reset_button.up,
-        icons.ui.reset_button.down,
+        icons.reset_button.up,
+        icons.reset_button.down,
         ui.getWorldWidth() - 120,
         ui.getWorldHeight() - 60,
         function ()

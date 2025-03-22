@@ -38,6 +38,24 @@
           "sound": "progress"
         }
       }]
+    },
+    "prison": {
+      "grid_x": 4,
+      "grid_y": 3,
+      "icon": "prison",
+      "label": "rescue",
+      "progress_quota": 1,
+      "on_complete": [{
+        "func": "convert_to",
+        "args": {
+          "to": {
+            "type": "relay",
+            "label": "freed prisoner",
+            "icon": "prisoner_1",
+            "maxlength": 1
+          }
+        }
+      }]
     }
   },
   "connections": {
