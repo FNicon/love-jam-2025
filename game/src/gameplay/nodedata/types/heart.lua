@@ -3,11 +3,11 @@ local components = require("src.gameplay.nodedata.components")
 local icons      = require("assets.icons")
 local audiomanager = require("src.audio.audiomanager")
 
-local type_name = "door"
+local type_name = "heart"
 
 return function (owner, params)
-  local door = node_data(type_name, owner, params.x, params.y)
-  door:addComponent(
+  local heart = node_data(type_name, owner, params.x, params.y)
+  heart:addComponent(
     components.progressable,
     {
       quota = params.quota,
@@ -18,17 +18,21 @@ return function (owner, params)
       on_progress = function (self)
         audiomanager.play_sfx("progress")
       end,
-      on_complete = function (self)
+      on_complete = function (self, levelmanager)
         audiomanager.play_sfx("door")
+        local player = levelmanager.get_nodes_filtered(function (node)
+          return node.data.type == "player"
+        end)[1]
+        player.data:getComponent(components.controllable).enabled = false
       end
     }
   )
-  door:addComponent(
+  heart:addComponent(
     components.display,
     {
-      icon = icons.door,
+      icon = icons.heart,
       label = params.label or type_name
     }
   )
-  return door
+  return heart
 end

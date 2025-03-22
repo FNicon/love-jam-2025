@@ -1,0 +1,37 @@
+{
+  "name": "Oppostion",
+  "player_location": {
+    "x": 3,
+    "y": 2
+  },
+  "nodes": {
+    "enemy": {
+      "type": "enemy",
+      "x": 4,
+      "y": 1,
+      "max_length": 1
+    },
+    "door": {
+      "x": 4,
+      "y": 2,
+      "type": "door",
+      "label": "find exit",
+      "quota": 4,
+      "required": true
+    },
+    "heart": {
+      "type": "heart",
+      "x": 3,
+      "y": 1,
+      "label": "player's heart",
+      "quota": 4
+    }
+  },
+  "connections": {
+    "enemy": {
+      "nodes": [
+        "door", "heart"
+      ]
+    }
+  }
+}

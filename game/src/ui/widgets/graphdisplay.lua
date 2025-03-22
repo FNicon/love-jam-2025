@@ -34,8 +34,11 @@ return function(
 
   function w:tryStartConnectionDrag(x, y)
     local foundNode = self:nodeAtLocation(x, y)
-    if foundNode ~= nil and foundNode.data:hasComponent(nodedata.components.controllable) then
-      self:startConnectionDrag(foundNode)
+    if foundNode ~= nil then
+      local controllable = foundNode.data:getComponent(nodedata.components.controllable)
+      if controllable ~= nil and controllable.enabled then
+        self:startConnectionDrag(foundNode)
+      end
     end
   end
 

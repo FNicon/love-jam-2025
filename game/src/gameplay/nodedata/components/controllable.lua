@@ -5,7 +5,9 @@ local name = "controllable"
 local controllable = {
   name = name,
   new = function (owner)
-    return component.create(name, owner)
+    local c = component.create(name, owner)
+    c.enabled = true
+    return c
   end
 }
 
