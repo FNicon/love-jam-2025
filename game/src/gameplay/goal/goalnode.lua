@@ -14,6 +14,8 @@ function goalnode.new(data)
   newnode.data.on_complete = data.on_complete
   newnode.data.on_connect = data.on_connect
   newnode.data.on_vote = data.on_vote
+  newnode.data.is_optional = false
+  newnode.data.belong_to = nil
 
   local lambda = {
   }
