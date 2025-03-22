@@ -41,16 +41,21 @@
     },
     "heart": {
       "grid_x": 3,
-      "grid_y": 3,
+      "grid_y": 1,
       "icon": "heart",
       "label": "player's heart",
       "progress_quota": 4,
-      "belong_to": "player",
       "is_optional": true,
       "on_complete": [{
         "func": "play_sfx",
         "args": {
           "sound": "door"
+        }
+      },
+      {
+        "func": "disable_node",
+        "args": {
+          "node": "player"
         }
       }],
       "on_connect": [{
@@ -65,12 +70,13 @@
           "sound": "progress"
         }
       }]
-    },
+    }
+  },
   "connections": {
     "enemy": {
       "side": "oppose",
       "nodes": [
-        "door"
+        "door", "heart"
       ]
     }
   }
