@@ -159,6 +159,10 @@ end
 
 function levelmanager.get_level_status()
   local goals = levelmanager.get_nodes_filtered(votemanager.is_required_goal)
+  if #goals == 0 then
+    -- most likely still loading
+    return level_states.in_progress
+  end
   local current_state = level_states.success
   for _, goal in ipairs(goals) do
     local progress = goal.data:getComponent(nodedata.components.progressable)
