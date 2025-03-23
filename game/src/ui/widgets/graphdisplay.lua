@@ -218,14 +218,12 @@ return function(
       love.graphics.setColor(unpack(palette['green'][4]))
       love.graphics.circle("line", node.data.x, node.data.y, self.node_radius)
       -- node label
-      if node.data.label ~= nil then
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.print(
-          display_component.label,
-          node.data.x - ui.font.default:getWidth(display_component.label) / 2,
-          node.data.y + self.node_radius
-        )
-      end
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.print(
+        display_component.label,
+        node.data.x - ui.font.default:getWidth(display_component.label) / 2,
+        node.data.y + self.node_radius
+      )
     end
   end
 
