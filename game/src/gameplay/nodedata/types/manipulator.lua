@@ -9,7 +9,7 @@ local type_name = "manipulator"
 
 return function (owner, params)
   local manipulator = node_data(type_name, owner, params.x, params.y)
-  manipulator:addComponent(components.controllable)
+  manipulator:addComponent(components.controllable, false)
   manipulator:addComponent(components.display, {
     icon = icons.prisoner_1,
     label = params.label or type_name,
@@ -32,7 +32,7 @@ return function (owner, params)
       voter.vote_side = new_vote_side
       local _node_data = owner
       local _controllable = _node_data.data:getComponent(components.controllable)
-      _controllable.enabled = false
+      _controllable.enabled = true
     end
   })
   manipulator:addComponent(components.voter, {
@@ -41,8 +41,5 @@ return function (owner, params)
     on_vote = function (self)
     end
   })
-  local _node_data = owner
-  local _controllable = _node_data.data:getComponent(components.controllable)
-  _controllable.enabled = false
   return manipulator
 end
