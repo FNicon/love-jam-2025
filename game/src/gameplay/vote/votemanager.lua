@@ -65,7 +65,7 @@ function votemanager.new(levelmanager)
         for _, goal in ipairs(goal_neighbors) do
           local voter = participant.data:getComponent(nodedata.components.voter)
           local progress = goal.data:getComponent(nodedata.components.progressable)
-          voter:vote(progress.votebox)
+          voter:vote(progress.votebox, goal)
         end
       end
       self:decideallresult()

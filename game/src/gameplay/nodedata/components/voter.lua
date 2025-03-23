@@ -56,10 +56,12 @@ local voter = {
       end
     end
 
-    c.vote = function (self, votebox)
+    c.vote = function (self, votebox, goal)
       local node_data = self.owner
       local node = node_data.owner
       local current_weight = 1
+      local edge = node:getedge(goal)
+      current_weight = edge.weight
       -- calculate chance to vote here based on current weight and other factors
       votebox:voteside(self.vote_side, current_weight)
       self:on_vote(votebox)
