@@ -1,5 +1,5 @@
 {
-  "name": "Oppostion",
+  "name": "Threat",
   "player_location": {
     "x": 3,
     "y": 2
@@ -12,19 +12,26 @@
       "max_length": 1
     },
     "door": {
+      "type": "door",
       "x": 4,
       "y": 2,
-      "type": "door",
-      "label": "find exit",
       "quota": 4,
       "required": true
     },
+    "prison": {
+      "type": "prison",
+      "x": 4,
+      "y": 3,
+      "quota": 1
+    },
     "heart": {
       "type": "heart",
-      "x": 3,
-      "y": 1,
+      "x": 5,
+      "y": 2,
+      "quota": 4,
       "label": "player's heart",
-      "quota": 4
+      "target": "player",
+      "max_length": 3
     }
   },
   "connections": {
@@ -32,6 +39,12 @@
       "nodes": [
         "door", "heart"
       ]
+    },
+    "heart": {
+      "nodes" : [
+        "player"
+      ]
     }
   }
 }
+
