@@ -122,10 +122,10 @@ function levelmanager.load(index)
 
   print(#levelmanager.nodes)
   -- create player
-  convert_params_coords(levelinfo.player_location)
-  local player = create_player_node(levelinfo.player_location)
-  loaded_node_map["player"] = player
-  print(#levelmanager.nodes)
+  -- convert_params_coords(levelinfo.player_location)
+  -- local player = create_player_node(levelinfo.player_location)
+  -- loaded_node_map["player"] = player
+  -- print(#levelmanager.nodes)
 
   -- load other nodes
   load_nodes(levelinfo.nodes, loaded_node_map)

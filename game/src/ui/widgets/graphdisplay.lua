@@ -103,7 +103,10 @@ return function(
     end
     self.highlightedEdge = nil
     for _, edge in ipairs(self.levelmanager.collectEdges()) do
-      if (w:onEdge(x, y, edge)) and (edge.n1.data.label == "player" or edge.n2.data.label == "player") then
+      if (w:onEdge(x, y, edge))
+        and (edge.n1.data:hasComponent(nodedata.components.controllable)
+        or edge.n2.data:hasComponent(nodedata.components.controllable)
+      ) then
         self.highlightedEdge = edge
         break
       end
