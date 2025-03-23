@@ -30,7 +30,7 @@
       "x": 4,
       "y": 2,
       "quota": 4,
-      "label": "player's heart",
+      "label": "protect",
       "target": "player",
       "max_length": 3
     }
