@@ -1,0 +1,33 @@
+{
+  "name": "Disguise",
+  "nodes": {
+    "player": {
+      "type": "player",
+      "x": 2,
+      "y": 1
+    },
+    "manipulator": {
+      "type": "fake",
+      "x": 3,
+      "y": 2,
+      "label": "prisoner",
+      "disguise" : "prisoner_1"
+    },
+    "manipulator2": {
+      "type": "fake",
+      "x": 3,
+      "y": 1,
+      "label": "path",
+      "disguise" : "path"
+    },
+    "door": {
+      "type": "door",
+      "x": 4,
+      "y": 1,
+      "label": "exit",
+      "quota": 4,
+      "required": true
+    }
+  }
+}
+
