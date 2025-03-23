@@ -9,6 +9,8 @@ return {
   end,
   write_as_json = function(levelinfo, filepath)
     local content = json.encode(levelinfo)
+    print(filepath)
+    print(content)
     love.filesystem.write(filepath, content)
   end
 }

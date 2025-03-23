@@ -4,7 +4,7 @@ return function (width, height, tile_size)
     height = height,
     tile_size = tile_size,
     draw = function (self)
-      for y = 0, height, 1 do
+      for y = 0, height - 1, 1 do
         for x = 0, width - 1, 1 do
           love.graphics.setLineWidth(2)
           local v = .3

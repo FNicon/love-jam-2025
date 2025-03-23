@@ -59,9 +59,9 @@ function ui.keypressed(key)
   widgets_run("keypressed", {key})
 end
 
-function ui.mousepressed(mouseX, mouseY)
+function ui.mousepressed(mouseX, mouseY, button, istouch, presses)
   local x, y = ui.getWorldCoords(mouseX, mouseY)
-  widgets_run("mousepressed", {x, y})
+  widgets_run("mousepressed", {x, y, button, istouch, presses})
 end
 
 function ui.mousemoved(mouseX, mouseY)
@@ -69,9 +69,13 @@ function ui.mousemoved(mouseX, mouseY)
   widgets_run("mousemoved", {x, y})
 end
 
-function ui.mousereleased(mouseX, mouseY)
+function ui.mousereleased(mouseX, mouseY, button, istouch, presses)
   local x, y = ui.getWorldCoords(mouseX, mouseY)
-  widgets_run("mousereleased", {x, y})
+  widgets_run("mousereleased", {x, y, button, istouch, presses})
+end
+
+function ui.wheelmoved(x, y)
+  widgets_run("wheelmoved", {x, y})
 end
 
 function ui.touchpressed(id, mouseX, mouseY, dx, dy, pressure)

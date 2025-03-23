@@ -11,7 +11,7 @@ function love.load(args)
   else
     app = require("game")
   end
-  app.load()
+  app.load(args)
   overlayStats.load() -- Should always be called last
 end
 
@@ -34,16 +34,20 @@ function love.keypressed(key)
   app.keypressed(key)
 end
 
-function love.mousepressed(x, y, istouch, presses)
-  app.mousepressed(x, y, istouch, presses)
+function love.mousepressed(x, y, button, istouch, presses)
+  app.mousepressed(x, y, button, istouch, presses)
 end
 
 function love.mousemoved(x, y)
   app.mousemoved(x, y)
 end
 
-function love.mousereleased(x, y)
+function love.mousereleased(x, y, button, istouch, presses)
   app.mousereleased(x, y)
+end
+
+function love.wheelmoved(x, y)
+  app.wheelmoved(x, y)
 end
 
 function love.touchpressed(id, x, y, dx, dy, pressure)
