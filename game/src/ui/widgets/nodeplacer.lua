@@ -1,11 +1,11 @@
 local nodedata = require("src.gameplay.nodedata")
 
-return function(tile_size)
+return function(grid)
   return {
     nodes = {},
     connections = {},
     connect = {},
-    tile_size = tile_size,
+    grid = grid,
     type_counts = {},
     add_node = function (self, node)
       if self.type_counts[node.type] == nil then
@@ -53,7 +53,9 @@ return function(tile_size)
     end,
     mousepressed = function(self, x, y, button)
       for i, node in ipairs(self.nodes) do
-        if x > node.x - tile_size/2 and x < node.x + tile_size/2 and y > node.y - tile_size / 2 and y < node.y + tile_size/2 then
+        local mouse_grid_x, mouse_grid_y = grid:worldToGridCoords(x, y)
+        local node_grid_x, node_grid_y = grid:worldToGridCoords(node.x, node.y)
+        if mouse_grid_x == node_grid_x and mouse_grid_y == node_grid_y then
           if self.connect.start == nil and self.mouse_attached_node == nil then
             if button == 1 then
               self.mouse_attached_node = node
@@ -77,7 +79,9 @@ return function(tile_size)
       if self.connect.start ~= nil then
         self.connect.target = {x = x, y = y}
         for _, node in ipairs(self.nodes) do
-          if x > node.x - tile_size/2 and x < node.x + tile_size/2 and y > node.y - tile_size / 2 and y < node.y + tile_size/2 then
+          local mouse_grid_x, mouse_grid_y = grid:worldToGridCoords(x, y)
+          local node_grid_x, node_grid_y = grid:worldToGridCoords(node.x, node.y)
+          if mouse_grid_x == node_grid_x and mouse_grid_y == node_grid_y then
             self.connect.target = node
             break
           end
@@ -86,7 +90,7 @@ return function(tile_size)
     end,
     mousereleased = function (self, x, y)
       if self.mouse_attached_node ~= nil then
-        local place_x, place_y = math.floor(x / tile_size) * tile_size, math.floor(y / tile_size) * tile_size
+        local place_x, place_y = grid:gridToWorldCoords(grid:worldToGridCoords(x, y))
         self.mouse_attached_node.x = place_x
         self.mouse_attached_node.y = place_y
         self.mouse_attached_node = nil

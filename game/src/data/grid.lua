@@ -8,7 +8,7 @@ function grid.new(tile_size)
   }
 
   function gridInstance.gridToWorldCoords(self, x, y)
-    return x * self.tile_size, y * self.tile_size
+    return x * self.tile_size + self.tile_size/2, y * self.tile_size + self.tile_size/2
   end
 
   function gridInstance.worldToGridCoords(self, x, y)

@@ -13,7 +13,7 @@ return function (ui, levelmanager, level_file)
     levelinfo = levelserializer.read_from_json(level_file)
   end
 
-  local nodeplacer = widgets.nodeplacer(tile_size)
+  local nodeplacer = widgets.nodeplacer(levelmanager.grid)
   local o = {
     widgets = {
       widgets.background(ui.background_color),
