@@ -6,14 +6,14 @@
       "x": 2,
       "y": 1
     },
-    "manipulator": {
+    "fake": {
       "type": "fake",
       "x": 3,
       "y": 2,
       "label": "prisoner",
       "disguise" : "prisoner_1"
     },
-    "manipulator2": {
+    "fake2": {
       "type": "fake",
       "x": 3,
       "y": 1,
