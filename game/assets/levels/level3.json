@@ -1,66 +1,32 @@
 {
   "name": "Oppostion",
   "player_location": {
-    "grid_x": 3,
-    "grid_y": 2
+    "x": 3,
+    "y": 2
   },
-  "characters": {
+  "nodes": {
     "enemy": {
-      "grid_x": 4,
-      "grid_y": 1,
-      "icon": "enemy_1",
-      "label": "ooze",
-      "maxlength": 1
-    }
-  },
-  "goals": {
+      "type": "enemy",
+      "x": 4,
+      "y": 1,
+      "max_length": 1
+    },
     "door": {
-      "grid_x": 4,
-      "grid_y": 2,
-      "icon": "door",
-      "label": "find exit",
-      "progress_quota": 4,
-      "on_complete": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "door"
-        }
-      }],
-      "on_connect": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "connect"
-        }
-      }],
-      "on_vote": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "progress"
-        }
-      }]
+      "type": "door",
+      "x": 4,
+      "y": 2,
+      "quota": 4,
+      "required": true
     },
     "prison": {
-      "grid_x": 4,
-      "grid_y": 3,
-      "icon": "prison",
-      "label": "rescue",
-      "progress_quota": 1,
-      "on_complete": [{
-        "func": "convert_to",
-        "args": {
-          "to": {
-            "type": "relay",
-            "label": "freed prisoner",
-            "icon": "prisoner_1",
-            "maxlength": 1
-          }
-        }
-      }]
+      "type": "prison",
+      "x": 4,
+      "y": 3,
+      "quota": 1
     }
   },
   "connections": {
     "enemy": {
-      "side": "oppose",
       "nodes": [
         "door"
       ]

@@ -11,7 +11,6 @@ function votebox.new()
           end
           return count
         end,
-        goal = {},
         votestorages = {},
         drawstorages = {},
         voteside = function(self, side, weight)

@@ -21,10 +21,7 @@ return function (ui, levelmanager)
         ui.getWorldWidth() - 60,
         ui.getWorldHeight() - 60,
         function ()
-          local levelinprogress = levelmanager.checklevelprogress()
-          if (levelinprogress) then
-            levelmanager.progressvote()
-          end
+          levelmanager.advance()
         end
       ),
       widgets.button(

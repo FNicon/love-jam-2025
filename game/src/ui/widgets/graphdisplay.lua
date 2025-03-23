@@ -1,6 +1,7 @@
 local distancecalculator = require("src.data.distance")
 local votetypes = require("src.gameplay.vote.votetype")
 local palette   = require("assets.palette")
+local nodedata  = require("src.gameplay.nodedata")
 
 return function(
   levelmanager
@@ -31,10 +32,13 @@ return function(
     self.connect.target = {x = node.data.x, y = node.data.y}
   end
 
-  function w:tryStartConnectionDrag( x, y)
+  function w:tryStartConnectionDrag(x, y)
     local foundNode = self:nodeAtLocation(x, y)
-    if foundNode ~= nil and foundNode.data.controllable then
-      self:startConnectionDrag(foundNode)
+    if foundNode ~= nil then
+      local controllable = foundNode.data:getComponent(nodedata.components.controllable)
+      if controllable ~= nil and controllable.enabled then
+        self:startConnectionDrag(foundNode)
+      end
     end
   end
 
@@ -42,7 +46,7 @@ return function(
     local xoff, yoff = x - self.connect.start.data.x, y - self.connect.start.data.y
     local clampedxoff, clampedyoff = distancecalculator.clampWorldToGridDistance(
       self.levelmanager.grid,
-      self.connect.start.data.maxlength,
+      self.connect.start.data:getComponent(nodedata.components.voter).max_length,
       xoff,
       yoff
     )
@@ -55,12 +59,21 @@ return function(
     end
   end
 
-  function w:releaseConnectionDrag(lambda)
+  function w:releaseConnectionDrag()
     if self.connect ~= nil then
       -- connect nodes if target is a node
       if self.connect.target.data ~= nil and not self.connect.start:isneighbor(self.connect.target) then
-        lambda.onConnect(self.connect.start, self.connect.target)
-        -- self.connect.start:connect(self.connect.target)
+        local voter = self.connect.start.data:getComponent(nodedata.components.voter)
+        local length = distancecalculator.worldToGridDistance(
+          self.levelmanager.grid,
+          self.connect.start.data.x,
+          self.connect.start.data.y,
+          self.connect.target.data.x,
+          self.connect.target.data.y
+        )
+        if voter ~= nil then
+          voter:on_connect(length, self.connect.target)
+        end
       end
       self.connect = nil
     end
@@ -98,17 +111,7 @@ return function(
   end
 
   function w:mousereleased(x, y)
-    local lambda = {
-      onConnect = function(startNode, targetNode)
-        if (startNode.lambda ~= nil) then
-          -- support or oppose action check here
-          local length = distancecalculator.worldToGridDistance(self.levelmanager.grid, startNode.data.x, startNode.data.y, targetNode.data.x, targetNode.data.y)
-          print("connection distance ", length)
-          startNode.lambda.pick_side(targetNode, "support", length)
-        end
-      end
-    }
-    self:releaseConnectionDrag(lambda)
+    self:releaseConnectionDrag()
     if self.highlightedEdge ~= nil then
       self.highlightedEdge.n1:disconnect(self.highlightedEdge.n2)
     end
@@ -162,45 +165,55 @@ return function(
     end
   end
 
+  function w:drawGoalProgress(node, progress)
+    local angleDelta = (2 * math.pi) / progress.quota
+    local votes = {}
+    for side, storage in pairs(progress.votes) do
+      for i = 1, storage.count, 1 do
+        table.insert(votes, {color = storage.color})
+      end
+    end
+    for i = 1, progress.quota, 1 do
+      if i <= #votes then
+        local vote = votes[i]
+        love.graphics.setColor(unpack(vote.color))
+      else
+        love.graphics.setColor(unpack(palette['green'][1]))
+      end
+      love.graphics.arc(
+        "fill",
+        node.data.x,
+        node.data.y,
+        self.node_radius * 1.5,
+        (i - 2) * angleDelta,
+        (i - 1) * angleDelta
+      )
+      love.graphics.setColor(unpack(palette['green'][4]))
+      love.graphics.arc(
+        "line",
+        node.data.x,
+        node.data.y,
+        self.node_radius * 1.5,
+        (i - 2) * angleDelta,
+        (i - 1) * angleDelta
+      )
+    end
+  end
+
   function w:drawNodes(ui)
     love.graphics.setLineWidth(2)
     for _, node in ipairs(self.levelmanager.nodes) do
-      if node.data.progress ~= nil then
-        local angleDelta = (2 * math.pi) / node.data.progress.max
-        for i = 1, node.data.progress.max, 1 do
-          if i <= node.data.progress.current then
-            if (node.data.goal.winners ~= nil and node.data.goal.winners[i] ~= nil) then
-              local winner = node.data.goal.winners[i]
-              love.graphics.setColor(unpack(votetypes[winner].color))
-            end
-          else
-            love.graphics.setColor(unpack(palette['green'][1]))
-          end
-          love.graphics.arc(
-            "fill",
-            node.data.x,
-            node.data.y,
-            self.node_radius * 1.5,
-            (i - 2) * angleDelta,
-            (i - 1) * angleDelta
-          )
-          love.graphics.setColor(unpack(palette['green'][4]))
-          love.graphics.arc(
-            "line",
-            node.data.x,
-            node.data.y,
-            self.node_radius * 1.5,
-            (i - 2) * angleDelta,
-            (i - 1) * angleDelta
-          )
-        end
+      local progress = node.data:getComponent(nodedata.components.progressable)
+      if progress ~= nil then
+        self:drawGoalProgress(node, progress)
       end
+      local display_component = node.data:getComponent(nodedata.components.display)
       -- node background
       love.graphics.setColor(unpack(palette['blue'][3]))
       love.graphics.circle("fill", node.data.x, node.data.y, self.node_radius)
       -- node icon
       love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.draw(node.data.icon, node.data.x - self.node_radius, node.data.y - self.node_radius)
+      love.graphics.draw(display_component.icon, node.data.x - self.node_radius, node.data.y - self.node_radius)
       -- node outline
       love.graphics.setColor(unpack(palette['green'][4]))
       love.graphics.circle("line", node.data.x, node.data.y, self.node_radius)
@@ -208,8 +221,8 @@ return function(
       if node.data.label ~= nil then
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.print(
-          node.data.label,
-          node.data.x - ui.font.default:getWidth(node.data.label) / 2,
+          display_component.label,
+          node.data.x - ui.font.default:getWidth(display_component.label) / 2,
           node.data.y + self.node_radius
         )
       end

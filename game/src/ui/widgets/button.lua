@@ -24,6 +24,7 @@ return function (label, icon_up, icon_down, x, y, onClick, clickable_label)
         icon = self.icon_up
       end
       love.graphics.setFont(ui.font.default)
+      love.graphics.setColor({1, 1, 1, 1})
       love.graphics.draw(
         icon,
         self.x - math.floor(icon:getWidth() / 2),

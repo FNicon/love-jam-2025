@@ -1,64 +1,24 @@
 {
-  "name": "Double Doors",
+  "name": "Far Door",
   "player_location": {
-    "grid_x": 3,
-    "grid_y": 2
+    "x": 3,
+    "y": 2
   },
-  "characters": {},
-  "goals": {
-    "door1": {
-      "grid_x": 4,
-      "grid_y": 3,
-      "icon": "search",
+  "nodes": {
+    "search": {
+      "type": "search",
+      "x": 4,
+      "y": 3,
       "label": "search",
-      "progress_quota": 2,
-      "on_complete": [{
-        "func": "convert_to",
-        "args": {
-          "to": {
-            "type": "relay",
-            "label": "path",
-            "icon": "path",
-            "maxlength": 1
-          }
-        }
-      },{
-        "func": "play_sfx",
-        "args": {
-          "sound": "door"
-        }
-      }],
-      "on_connect": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "connect"
-        }
-      }],
-      "on_vote": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "progress"
-        }
-      }]
+      "quota": 2
     },
-    "door2": {
-      "grid_x": 5,
-      "grid_y": 2,
-      "icon": "door",
+    "door": {
+      "type": "door",
+      "x": 5,
+      "y": 2,
       "label": "exit",
-      "progress_quota": 1,
-      "on_connect": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "connect"
-        }
-      }],
-      "on_vote": [{
-        "func": "play_sfx",
-        "args": {
-          "sound": "progress"
-        }
-      }]
+      "quota": 1,
+      "required": true
     }
   }
 }

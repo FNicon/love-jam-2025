@@ -2,21 +2,22 @@ local votemanager        = require("src.gameplay.vote.votemanager")
 local graph              = require("src.data.graph")
 local distancecalculator = require("src.data.distance")
 local grid               = require("src.data.grid")
-local characternode      = require("src.gameplay.character.characternode")
-local goalnode           = require("src.gameplay.goal.goalnode")
 local levelserializer    = require("src.level.levelserializer")
-local icons              = require("assets.icons")
 local audiomanager       = require("src.audio.audiomanager")
-local heartnode          = require("src.gameplay.heart.heartnode")
+local nodedata           = require("src.gameplay.nodedata")
+local goalstate          = require("src.gameplay.goal.goalstate")
 
 local levelmanager = {}
-local currentgoals = {}
-local currenthearts = {}
-local currentparticipants = {}
 local currentvotemanager = {}
 local turncount = 0
 local levels = {}
 local levels_directory = 'assets/levels'
+
+local level_states = {
+  success = 1,
+  failed = 2,
+  in_progress = 3
+}
 
 local function level_path_from_index(index)
   return string.format('assets/levels/level%s.json', index)
@@ -38,65 +39,8 @@ local function load_level_files()
   end
 end
 
-function levelmanager.init()
-  levelmanager.nodes = {}
-  levelmanager.currentlevelname = "No Level Loaded"
-  levelmanager.grid = grid.new(60)
-  load_level_files()
-end
-
-local function create_player_node(info)
-  local worldx, worldy = levelmanager.grid:gridToWorldCoords(info.grid_x, info.grid_y)
-  return characternode.new{
-    x = worldx,
-    y = worldy,
-    icon = icons.player,
-    label = "player",
-    active = true,
-    maxlength = 1,
-    controllable = true
-  }
-end
-
-local function create_character_node(info)
-  return characternode.new{
-    x = info.x,
-    y = info.y,
-    icon = icons[info.icon],
-    label = info.label,
-    active = info.active,
-    maxlength = info.maxlength,
-  }
-end
-
-local function create_goal_node(info)
-  return goalnode.new{
-    x = info.x,
-    y = info.y,
-    icon = icons[info.icon],
-    label = info.label,
-    progress = {max = info.progress_quota, current = 0},
-    maxlength = info.maxlength,
-    on_complete = info.on_complete,
-    on_connect = info.on_connect,
-    on_vote = info.on_vote,
-    is_optional = info.is_optional
-  }
-end
-
-local function create_heart_node(info)
-  return heartnode.new{
-    x = info.x,
-    y = info.y,
-    icon = icons.object[info.icon],
-    label = info.label,
-    progress = {max = info.progress_quota, current = 0},
-    maxlength = info.maxlength,
-    on_complete = info.on_complete,
-    on_connect = info.on_connect,
-    on_vote = info.on_vote,
-    char_owner = info.char_owner
-  }
+function levelmanager.is_level_loaded()
+  return levelmanager.currentlevel ~= -1
 end
 
 local function init_levelmanager_info(index, name)
@@ -106,24 +50,62 @@ local function init_levelmanager_info(index, name)
   levelmanager.currentlevelname = name
 end
 
-local function convert_info_coords(info)
-  info.x, info.y = levelmanager.grid:gridToWorldCoords(info.grid_x, info.grid_y)
-end
-
-local function load_nodes(level_info_node_map, loaded_node_map, builder)
-  for name, info in pairs(level_info_node_map) do
-    convert_info_coords(info)
-    local node = builder(info)
-    if loaded_node_map[name] ~= nil then
-      error(load_level_error("node names must be unique, found duplicate[" .. name .."]"))
-    end
-    table.insert(levelmanager.nodes, node)
-    loaded_node_map[name] = node
-  end
+function levelmanager.init()
+  init_levelmanager_info(-1, "No Level Loaded")
+  levelmanager.grid = grid.new(60)
+  load_level_files()
 end
 
 function levelmanager.on_load(index)
   audiomanager.play_sfx("next_level")
+end
+
+local function convert_params_coords(params)
+  params.x, params.y = levelmanager.grid:gridToWorldCoords(params.x, params.y)
+end
+
+function levelmanager.create_node(params)
+  local node = graph.node()
+  local data_type = nodedata.types[params.type]
+  node.data = data_type(node, params)
+  table.insert(levelmanager.nodes, node)
+  return node
+end
+
+local function create_player_node(params)
+  params.type = "player"
+  return levelmanager.create_node(params)
+end
+
+function levelmanager.remove_node(node_to_remove)
+  local index
+  for i, node in ipairs(levelmanager.nodes) do
+    if node == node_to_remove then
+      index = i
+      break
+    end
+  end
+  table.remove(levelmanager.nodes, index)
+end
+
+function levelmanager.get_nodes_filtered(filter_func)
+  local nodes = {}
+  for _, node in ipairs(levelmanager.nodes) do
+    if filter_func(node) == true then
+      table.insert(nodes, node)
+    end
+  end
+  return nodes
+end
+
+local function load_nodes(level_info_node_map, loaded_node_map)
+  for name, params in pairs(level_info_node_map) do
+    convert_params_coords(params)
+    if loaded_node_map[name] ~= nil then
+      error(load_level_error("node names must be unique, found duplicate[" .. name .."]"))
+    end
+    loaded_node_map[name] = levelmanager.create_node(params)
+  end
 end
 
 function levelmanager.load(index)
@@ -131,35 +113,39 @@ function levelmanager.load(index)
   levelmanager.on_load(index)
 
   -- grab level info from table, preferably this is verified to exist
-  -- and is validat load time
-  print(#levels)
-  local levelinfo = levels[index]
+  -- and is validated load time
+  local levelinfo = table.deep_copy(levels[index])
   init_levelmanager_info(index, levelinfo.name)
 
   -- used to build existing connections and enforce unique names
   local loaded_node_map = {}
 
+  print(#levelmanager.nodes)
   -- create player
+  convert_params_coords(levelinfo.player_location)
   local player = create_player_node(levelinfo.player_location)
   loaded_node_map["player"] = player
-  table.insert(levelmanager.nodes, player)
+  print(#levelmanager.nodes)
 
-  -- load nodes
-  load_nodes(levelinfo.characters, loaded_node_map, create_character_node)
-  load_nodes(levelinfo.goals, loaded_node_map, create_goal_node)
-  -- load_nodes(levelinfo.heart, loaded_node_map, create_heart_node)
+  -- load other nodes
+  load_nodes(levelinfo.nodes, loaded_node_map)
 
   -- create exiting connections
   if levelinfo.connections ~= nil then
     print("Creating existing connections")
     for name, node in pairs(loaded_node_map) do
       if levelinfo.connections[name] ~= nil then
-        local side = levelinfo.connections[name].side
-        local targetname = levelinfo.connections[name].nodes
-        for _, target in ipairs(targetname) do
-          local length = distancecalculator.worldToGridDistance(levelmanager.grid, node.data.x, node.data.y, loaded_node_map[target].data.x, loaded_node_map[target].data.y)
+        local targets = levelinfo.connections[name].nodes
+        for _, name in ipairs(targets) do
+          local target = loaded_node_map[name]
+          local length = distancecalculator.worldToGridDistance(
+            levelmanager.grid,
+            node.data.x, node.data.y,
+            target.data.x, target.data.y
+          )
           print("connection distance ", length)
-          node.lambda.pick_side(loaded_node_map[target], side, length)
+          local voter = node.data:getComponent(nodedata.components.voter)
+          voter:on_connect(length, target)
         end
       end
     end
@@ -171,75 +157,47 @@ function levelmanager.load(index)
   print("Level loaded successfully")
 end
 
+function levelmanager.get_level_status()
+  local goals = levelmanager.get_nodes_filtered(votemanager.is_required_goal)
+  local current_state = level_states.success
+  for _, goal in ipairs(goals) do
+    local progress = goal.data:getComponent(nodedata.components.progressable)
+    if progress.goal_state == goalstate.pending then
+      current_state = level_states.in_progress
+    elseif progress.goal_state == goalstate.failed then
+      return level_states.failed
+    end
+  end
+  -- to do is heart list check really needed?
+  -- local hearts = levelmanager.get_nodes_filtered(votemanager.is_heart)
+  -- for _, heart in ipairs(hearts) do
+  --   local progress = heart.data:getComponent(nodedata.components.progressable)
+  --   if progress.goal_state == goalstate.pending then
+  --     current_state = level_states.in_progress
+  --   elseif progress.goal_state == goalstate.failed then
+  --     return level_states.failed
+  --   end
+  -- end
+  return current_state
+end
+
+function levelmanager.advance()
+  local level_status = levelmanager.get_level_status()
+  if (level_status == level_states.failed) then
+    -- handle failure
+  elseif level_status == level_states.success then
+    levelmanager.loadnextlevel()
+  else
+    turncount = turncount + 1
+    print("Start vote turn ", turncount)
+    currentvotemanager:poll()
+  end
+end
+
 function levelmanager.setupvotemanager(is_re_setup)
-  currentgoals = votemanager.retrieveallgoals(levelmanager.nodes)
-  -- currenthearts = votemanager.retrieveallhearts(levelmanager.nodes)
-  currentparticipants = votemanager.retrieveallparticipants(levelmanager.nodes)
   if not (is_re_setup) then
     currentvotemanager = votemanager.new(levelmanager)
   end
-  currentvotemanager:addvoteboxlist(currentgoals)
-end
-
-function levelmanager.progressvote()
-  turncount = turncount + 1
-  print("Start vote turn ", turncount)
-  if not levelmanager.islevelcompleted() then
-    currentvotemanager:startvote(currentparticipants, currentgoals)
-    currentvotemanager:endvote()
-  end
-end
-
-function levelmanager.islevelcompleted()
-  if currentgoals == nil or #currentgoals == 0 then
-    return true
-  else
-    local foundunfinishedgoal = false
-    for _, goal in ipairs(currentgoals) do
-      if goal.data.goal.state ~= "decided" then
-        foundunfinishedgoal = true
-        break
-      end
-    end
-    return not foundunfinishedgoal
-  end
-end
-
-function levelmanager.islevelwin()
-  local foundfailuregoal = false
-  for _, goal in ipairs(currentgoals) do
-    if not goal.data.is_optional then
-      if goal.data.goal.state ~= "decided" then
-        foundfailuregoal = true
-      elseif goal.data.goal.winner == "oppose" then
-        foundfailuregoal = true
-        print("========WINNER : ", goal.data.goal.winner)
-      end
-    end
-    print("WINNER : ", goal.data.goal.winner)
-    if (foundfailuregoal) then
-      break
-    end
-  end
-  return not foundfailuregoal
-end
-
-function levelmanager.checklevelprogress()
-  local islevelstillinprogress = true
-  if levelmanager.islevelcompleted() then
-    print("Level completed!")
-    islevelstillinprogress = false
-    if levelmanager.islevelwin() then
-      print("Level successed!")
-      levelmanager.loadnextlevel()
-    else
-      print("Level failed!")
-      levelmanager.restartlevel()
-    end
-  else
-    print("Level in progress...")
-  end
-  return islevelstillinprogress
 end
 
 function levelmanager.restartlevel()
@@ -252,13 +210,11 @@ function levelmanager.restartlevel()
 end
 
 function levelmanager.all_levels_completed()
-  return levelmanager.currentlevel > #levels and levelmanager.islevelcompleted()
+  return levelmanager.currentlevel >= #levels and levelmanager.get_level_status() == level_states.success
 end
 
 function levelmanager.loadnextlevel()
-  if levelmanager.islevelcompleted() and not levelmanager.all_levels_completed() then
-    levelmanager.load(levelmanager.currentlevel + 1)
-  end
+  levelmanager.load(levelmanager.currentlevel + 1)
 end
 
 function levelmanager.printlevel()
