@@ -23,5 +23,9 @@ return function (type, owner, x, y)
     return self.components[component.name]
   end
 
+  function d:removeComponent(component)
+    return self.components[component.name]
+  end
+
   return d
 end
