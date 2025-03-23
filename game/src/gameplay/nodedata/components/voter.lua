@@ -40,6 +40,22 @@ local voter = {
       end
     end
 
+    c.on_disconnect = function (self, end_node)
+      local node_data = self.owner
+      local node = node_data.owner
+
+      -- disconnect
+      if (node:isneighbor(end_node)) then
+        node:disconnect(end_node)
+      end
+
+      -- invoke on_disconnect
+      local cr = node_data:getComponent(connect_response)
+      if cr ~= nil  then
+        cr:on_disconnect()
+      end
+    end
+
     c.vote = function (self, votebox)
       local node_data = self.owner
       local node = node_data.owner

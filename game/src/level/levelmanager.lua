@@ -168,6 +168,16 @@ function levelmanager.get_level_status()
       return level_states.failed
     end
   end
+  -- to do is heart list check really needed?
+  -- local hearts = levelmanager.get_nodes_filtered(votemanager.is_heart)
+  -- for _, heart in ipairs(hearts) do
+  --   local progress = heart.data:getComponent(nodedata.components.progressable)
+  --   if progress.goal_state == goalstate.pending then
+  --     current_state = level_states.in_progress
+  --   elseif progress.goal_state == goalstate.failed then
+  --     return level_states.failed
+  --   end
+  -- end
   return current_state
 end
 
