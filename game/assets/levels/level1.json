@@ -1,14 +1,15 @@
 {
   "name": "The First Door",
-  "player_location": {
-    "x": 3,
+  "nodes": {
+  "player": {
+    "type": "player",
+    "x": 2,
     "y": 2
   },
-  "nodes": {
     "door": {
       "type": "door",
       "quota": 1,
-      "x": 4,
+      "x": 3,
       "y": 2,
       "required": true
     }

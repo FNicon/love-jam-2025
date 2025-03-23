@@ -1,21 +1,22 @@
 {
   "name": "Far Door",
-  "player_location": {
-    "x": 3,
-    "y": 2
-  },
   "nodes": {
+    "player": {
+      "type": "player",
+      "x": 2,
+      "y": 1
+    },
     "search": {
       "type": "search",
-      "x": 4,
-      "y": 3,
+      "x": 3,
+      "y": 2,
       "label": "search",
       "quota": 2
     },
     "door": {
       "type": "door",
-      "x": 5,
-      "y": 2,
+      "x": 4,
+      "y": 1,
       "label": "exit",
       "quota": 1,
       "required": true
