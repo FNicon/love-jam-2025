@@ -58,6 +58,7 @@ return function(tile_size)
             if button == 1 then
               self.mouse_attached_node = node
             elseif button == 2 then
+              -- todo: remove connections
               table.remove(self.nodes, i)
             elseif button == 3 then
               self.connect.start = node

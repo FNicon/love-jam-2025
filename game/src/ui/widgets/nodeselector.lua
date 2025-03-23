@@ -11,7 +11,7 @@ return function(nodeplacer, x, y)
   return {
     dummy_nodes = dummy_nodes,
     nodeplacer = nodeplacer,
-    max_visible = 9,
+    max_visible = 8,
     x = x,
     y = y,
     index_to_position = function(self, index)
