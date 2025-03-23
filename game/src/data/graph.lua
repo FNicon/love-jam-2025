@@ -1,3 +1,4 @@
+local connectable = require("src.gameplay.nodedata.components.connectable")
 local palette = require("assets.palette")
 
 local graph = {}
@@ -68,8 +69,14 @@ function graph.node(data)
         weight = used_weight,
         label = connectionlabel
       })
-      print("connecting... ", self.data.label, " to ", neighbor.data.label, " with weight ", used_weight, " and label ", connectionlabel)
+      print("connecting... ", self.id, " to ", neighbor.id, " with weight ", used_weight, " and label ", connectionlabel)
       table.insert(self.neighbors, neighbor)
+      local _connectable = neighbor.data:getComponent(connectable)
+      -- trigger on connected
+      if _connectable ~= nil then
+        local edge = self:getedge(neighbor)
+        _connectable:on_connected(edge)
+      end
     end,
     disconnect = function(self, neighbor)
       for i, edge in ipairs(self.edges) do

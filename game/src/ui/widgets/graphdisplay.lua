@@ -2,6 +2,7 @@ local distancecalculator = require("src.data.distance")
 local votetypes = require("src.gameplay.vote.votetype")
 local palette   = require("assets.palette")
 local nodedata  = require("src.gameplay.nodedata")
+local voter     = require("src.gameplay.nodedata.components.voter")
 
 return function(
   levelmanager
@@ -141,7 +142,12 @@ return function(
       if (edge ~= nil) then
         love.graphics.setColor(unpack(votetypes[edge.label].color))
       else
-        love.graphics.setColor(unpack(votetypes["support"].color))
+        local source_voter = from.data:getComponent(voter)
+        local default_color = "support"
+        if (source_voter) then
+          default_color = source_voter.vote_side
+        end
+        love.graphics.setColor(unpack(votetypes[default_color].color))
       end
     end
     love.graphics.line(start_x, start_y, end_x, end_y)
@@ -152,7 +158,13 @@ return function(
       to.y - from.data.y,
       to.x - from.data.x
     )
-    love.graphics.setColor(unpack(votetypes["support"].color))
+    local source_voter = from.data:getComponent(voter)
+    local default_color = "support"
+    if (source_voter) then
+      default_color = source_voter.vote_side
+    end
+
+    love.graphics.setColor(unpack(votetypes[default_color].color))
     local start_x, start_y =  from.data.x + math.cos(angle) * self.node_radius,
                               from.data.y + math.sin(angle) * self.node_radius
     love.graphics.line(start_x, start_y, to.x, to.y)

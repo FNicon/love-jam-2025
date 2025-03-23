@@ -1,24 +1,29 @@
 {
-  "name": "Far Away Door",
+  "name": "Manipulation",
   "nodes": {
     "player": {
       "type": "player",
       "x": 2,
       "y": 1
     },
-    "search": {
-      "type": "search",
+    "manipulator": {
+      "type": "manipulator",
       "x": 3,
       "y": 2,
-      "label": "search",
-      "quota": 2
+      "label": "manipulator"
+    },
+    "manipulator2": {
+      "type": "manipulator",
+      "x": 3,
+      "y": 1,
+      "label": "manipulator"
     },
     "door": {
       "type": "door",
       "x": 4,
       "y": 1,
       "label": "exit",
-      "quota": 1,
+      "quota": 4,
       "required": true
     }
   }

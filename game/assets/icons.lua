@@ -9,6 +9,7 @@ return {
   search = love.graphics.newImage("assets/search.png"),
   save = love.graphics.newImage("assets/save.png"),
   heart = love.graphics.newImage("assets/heart.png"),
+  disguise = love.graphics.newImage("assets/disguise.png"),
   advance_button = {
     up = love.graphics.newImage("assets/advance_button_up.png"),
     down = love.graphics.newImage("assets/advance_button_down.png")
