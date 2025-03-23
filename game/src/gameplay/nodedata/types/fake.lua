@@ -58,7 +58,13 @@ return function (owner, params)
 
       local _disguiseable = node_data:getComponent(disguiseable)
       _disguiseable:on_detected()
+      local _node_data = owner
+      local _controllable = _node_data.data:getComponent(components.controllable)
+      _controllable.enabled = true
     end
   })
+  local _node_data = owner
+  local _controllable = _node_data.data:getComponent(components.controllable)
+  _controllable.enabled = false
   return fake
 end

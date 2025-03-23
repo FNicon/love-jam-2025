@@ -1,0 +1,65 @@
+{
+  "name": "Race",
+  "nodes": {
+    "player": {
+      "type": "player",
+      "x": 1,
+      "y": 1
+    },
+    "prison": {
+      "type": "prison",
+      "x": 3,
+      "y": 2,
+      "quota": 1
+    },
+    "fake": {
+      "type": "fake",
+      "x": 2,
+      "y": 1,
+      "label": "prisoner",
+      "disguise" : "prisoner_2"
+    },
+    "fake2": {
+      "type": "fake",
+      "x": 3,
+      "y": 1,
+      "label": "path",
+      "disguise" : "path"
+    },
+    "manipulator": {
+      "type": "manipulator",
+      "x": 4,
+      "y": 1,
+      "label": "manipulator"
+    },
+
+    "prison2": {
+      "type": "prison",
+      "x": 4,
+      "y": 2,
+      "quota": 5
+    },
+    "door": {
+      "type": "door",
+      "x": 5,
+      "y": 1,
+      "label": "exit",
+      "quota": 4,
+      "required": true
+    },
+    "enemy": {
+      "type": "enemy",
+      "x": 3,
+      "y": 3,
+      "max_length": 1
+    }
+  },
+  "connections": {
+    "enemy": {
+      "nodes": [
+        "prison"
+      ]
+    }
+  }
+}
+
