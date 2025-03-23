@@ -37,14 +37,19 @@ function votemanager.new(levelmanager)
       local support_count = progress.votes[votetype.support.label].count
       local oppose_count = progress.votes[votetype.oppose.label].count
       local total_count = support_count + oppose_count
+      local winner = nil
       if total_count >= progress.quota then
         if support_count > oppose_count then
           progress.goal_state = goalstate.completed
-        else
+          winner = votetype.support.label
+        elseif support_count == oppose_count then
           -- tie counts as failed
           progress.goal_state = goalstate.failed
+        else
+          winner = votetype.oppose.label
+          progress.goal_state = goalstate.failed
         end
-        progress:on_complete(self.levelmanager)
+        progress:on_complete(self.levelmanager, winner)
       end
     end,
     decideallresult = function(self)

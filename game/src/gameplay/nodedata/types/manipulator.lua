@@ -30,6 +30,9 @@ return function (owner, params)
         end
       end
       voter.vote_side = new_vote_side
+      local _node_data = owner
+      local _controllable = _node_data.data:getComponent(components.controllable)
+      _controllable.enabled = false
     end
   })
   manipulator:addComponent(components.voter, {
@@ -38,5 +41,8 @@ return function (owner, params)
     on_vote = function (self)
     end
   })
+  local _node_data = owner
+  local _controllable = _node_data.data:getComponent(components.controllable)
+  _controllable.enabled = false
   return manipulator
 end

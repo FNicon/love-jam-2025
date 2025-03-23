@@ -17,14 +17,14 @@ return function (owner, params)
       on_progress = function (self)
         audiomanager.play_sfx("progress")
       end,
-      on_complete = function (self, levelmanager)
+      on_complete = function (self, levelmanager, winner)
         audiomanager.play_sfx("door")
         local node_data = self.owner
         levelmanager.create_node({
           type = "prisoner",
           x = node_data.x,
           y = node_data.y,
-          vote_side = "support"
+          vote_side = winner
         })
         levelmanager.remove_node(node_data.owner)
       end
