@@ -18,6 +18,12 @@ local votetypes = {
     color = palette['blue'][3],
     highlight = palette['blue'][2],
     progress = false,
+  },
+  debuff = {
+    label = "debuff",
+    color = palette['blue'][3],
+    highlight = palette['blue'][2],
+    progress = false,
   }
 }
 

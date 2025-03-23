@@ -8,5 +8,7 @@ return {
     next_level = love.audio.newSource("assets/audio/sfx/next_level.wav", "static"),
     progress = love.audio.newSource("assets/audio/sfx/progress.wav", "static"),
     connect = love.audio.newSource("assets/audio/sfx/connect.wav", "static"),
+    death = love.audio.newSource("assets/audio/sfx/death.wav", "static"),
+    hurt = love.audio.newSource("assets/audio/sfx/hurt.wav", "static"),
   }
 }
