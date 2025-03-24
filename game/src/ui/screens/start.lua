@@ -9,7 +9,7 @@ return function (ui, levelmanager)
     widgets = {
       widgets.background(palette.blue[4]),
       widgets.title(
-        'Placeholder Title',
+        'Dungeons & Diplomacy',
         (ui.getWorldWidth() - icons.path:getWidth())/2,
         (ui.getWorldHeight() - icons.path:getHeight())/2 - 64
       ),

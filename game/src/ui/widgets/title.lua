@@ -1,3 +1,4 @@
+local palette = require "assets.palette"
 return function (text, x, y)
   return {
     x = x,
@@ -5,6 +6,7 @@ return function (text, x, y)
     text = text,
     draw = function (self, ui)
       love.graphics.setFont(ui.font.title)
+      love.graphics.setColor(palette.orange[4])
       love.graphics.print(
         self.text,
         self.x - ui.font.title:getWidth(self.text) / 2,

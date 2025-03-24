@@ -40,11 +40,6 @@
       "nodes": [
         "door", "heart"
       ]
-    },
-    "heart": {
-      "nodes" : [
-        "player"
-      ]
     }
   }
 }
